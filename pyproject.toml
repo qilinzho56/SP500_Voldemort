@@ -16,10 +16,6 @@ cssselect = "^1.2.0"
 pandas = "^1.5.3"
 matplotlib = "^3.7.0"
 
-[tool.poetry.scripts]
-my-script = "SP50.headlines.webscraping:start"
-
-
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
