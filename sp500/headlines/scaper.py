@@ -45,7 +45,7 @@ def headlines(headers, company_list, max_days):
         for row in news_rows:
             time_extract = " ".join(row.xpath("./td/text()"))
             if re.match(date_pattern, time_extract.split()[0]):
-                if time_extract.split()[0] == "Today":
+                if "Today" in time_extract:
                     cur_date = date.today()
                     cur_date = cur_date.strftime("%b-%d-%y")
                     cur_time = time_extract.split()[1]
@@ -55,6 +55,7 @@ def headlines(headers, company_list, max_days):
                 days_visited += 1
 
                 if days_visited > max_days:
+                    print(f"Maximum Days Reached For {company}")
                     break
 
             headline = " ".join(row.xpath(".//a[@target='_blank']/text()"))
