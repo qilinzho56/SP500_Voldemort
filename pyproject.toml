@@ -1,10 +1,10 @@
 [tool.poetry]
-name = "SP-500"
+name = "sp500"
 version = "0.1.0"
 description = ""
 authors = ["Beichi Wu - Yolanda Yang - Sizhe Ding - Qilin Zhou"]
 readme = "README.md"
-packages = [{include = "SP-500"}]
+packages = [{include = "sp500"}]
 
 [tool.poetry.dependencies]
 python = "^3.8"
