@@ -1,10 +1,10 @@
 from sp500.headlines.scraper import headlines
-import sys
 import PySimpleGUI as sg
 import webbrowser
 
 FONT = {"Arial Bold", 16}
 sg.set_options(font=FONT)
+
 
 class TickerApplication:
     def __init__(self):
@@ -13,15 +13,24 @@ class TickerApplication:
         self.window2()
 
     def window1(self):
-        self.lst = sg.Listbox(self.tickers, size=(40, 6),
-                 expand_y=True, enable_events=True, key="-LIST-")
-        layout = [[sg.Input(size=(40, 6), expand_x=True, key="-INPUT-"), 
-                   sg.Button("Add"), sg.Button("Remove"), sg.Button("Exit")],
-                [sg.Text("Days to Look-up [same for all tickers]"), sg.Input(size=(40,6), key="-Day-")],
-                [self.lst],
-                [sg.Text("", key="-MSG-", justification="center")],
-                [sg.Submit()]
-]
+        self.lst = sg.Listbox(
+            self.tickers, size=(40, 6), expand_y=True, enable_events=True, key="-LIST-"
+        )
+        layout = [
+            [
+                sg.Input(size=(40, 6), expand_x=True, key="-INPUT-"),
+                sg.Button("Add"),
+                sg.Button("Remove"),
+                sg.Button("Exit"),
+            ],
+            [
+                sg.Text("Days to Look-up [same for all tickers]"),
+                sg.Input(size=(40, 6), key="-Day-"),
+            ],
+            [self.lst],
+            [sg.Text("", key="-MSG-", justification="center")],
+            [sg.Submit()],
+        ]
         self.window1 = sg.Window("Ticker Application", layout, size=(800, 400))
 
     def window2(self):
@@ -29,7 +38,7 @@ class TickerApplication:
 
     def run_window1(self, headers):
         while True:
-            event, values = self.window1.read() 
+            event, values = self.window1.read()
             if event in (sg.WIN_CLOSED, "Exit"):
                 break
             if event == "Add":
@@ -54,11 +63,23 @@ class TickerApplication:
     def update_window2(self):
         headings = self.news_data.columns.tolist()
         self.data_overview = self.news_data.values.tolist()
-        layout = [[sg.Table(self.data_overview, headings=headings, size=(100,40), justification="left", 
-                    expand_x = True,
-                    enable_events=True, key="-TABLE-")]]
+        layout = [
+            [
+                sg.Table(
+                    self.data_overview,
+                    headings=headings,
+                    size=(100, 40),
+                    justification="left",
+                    expand_x=True,
+                    enable_events=True,
+                    key="-TABLE-",
+                )
+            ]
+        ]
 
-        self.window2 = sg.Window("Overview with URLs Clickable", layout, size=(800,400))
+        self.window2 = sg.Window(
+            "Overview with URLs Clickable", layout, size=(800, 400)
+        )
 
     def run_window2(self):
         while True:

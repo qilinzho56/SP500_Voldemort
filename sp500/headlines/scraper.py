@@ -10,9 +10,9 @@ Original file is located at
 import requests
 import lxml.html
 import pandas as pd
-import numpy as np
 import re
 from datetime import date
+
 
 def headlines(headers, company_list, max_days):
     """
@@ -30,7 +30,7 @@ def headlines(headers, company_list, max_days):
     df: a dataframe including the date, time, company, headline and and url link
     """
     data = []
-    date_pattern = re.compile(r'[A-Za-z]+')
+    date_pattern = re.compile(r"[A-Za-z]+")
 
     for company in company_list:
         company_url = headers["Referer"] + company
