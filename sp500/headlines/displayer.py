@@ -55,7 +55,10 @@ class TickerApplication:
             if event == "Submit":
                 company_list = self.tickers
                 self.news_data = headlines(headers, company_list, int(values["-Day-"]))
-                msg = "Your news report has been fetched!"
+                if self.news_data.empty:
+                    msg = "Ticker Not Found/No Related News!"
+                else:
+                    msg = "Your News Report Has Been Fetched!"
                 self.window1["-MSG-"].update(msg)
 
         self.window1.close()
@@ -68,7 +71,9 @@ class TickerApplication:
                 sg.Table(
                     self.data_overview,
                     headings=headings,
-                    size=(100, 40),
+                    size=(100, 100),
+                    auto_size_columns=False,
+                    col_widths=[5, 5, 7, 80, 10],
                     justification="left",
                     expand_x=True,
                     enable_events=True,
@@ -78,7 +83,7 @@ class TickerApplication:
         ]
 
         self.window2 = sg.Window(
-            "Overview with URLs Clickable", layout, size=(800, 400)
+            "Overview with URLs Clickable", layout, size=(1400, 1000)
         )
 
     def run_window2(self):
