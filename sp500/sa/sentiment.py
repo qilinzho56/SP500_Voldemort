@@ -17,12 +17,14 @@ def sentiment_analyzer():
     )
     labeled_data = pd.read_csv(labeled_data_filename, encoding="unicode_escape")
 
+    labeled_data = cleanup(labeled_data)
+
     labeled_data["Polarity"] = None
     labeled_data["Subjectivity"] = None
     labeled_data["Predicted PNU"] = None
 
     for index, row in labeled_data.iterrows():
-        headline = row["Headline"]
+        headline = row["Cleaned Headline"]
 
         if isinstance(headline, float):
             headline = str(headline)
