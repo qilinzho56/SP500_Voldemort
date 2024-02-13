@@ -56,11 +56,11 @@ def POS_in_DF(headers = None, company_list = None, max_days = None):
 
     
     # df = headlines(headers, company_list, max_days)
-    df = pd.read_csv("../SP500/test_pos.csv")
+    df = pd.read_csv("./sp500/compile/test_pos.csv")
     for index, row in df.iterrows():
         POS_tagging(row["Headline"], df, index)
     
-    df.to_csv("/Finished_test_pos.csv", index=False)
+    df.to_csv("./sp500/compile/Finished_test_pos.csv", index=False)
     
 if __name__ == "__main__":
     POS_in_DF()
