@@ -43,7 +43,7 @@ def headlines(headers, company_list, max_days):
         days_visited = 0
 
         for row in news_rows:
-            time_extract = " ".join(row.xpath("./td/text()"))
+            time_extract = row.xpath("./td")[0].text_content()
             if re.match(date_pattern, time_extract.split()[0]):
                 if "Today" in time_extract:
                     cur_date = date.today()
@@ -57,10 +57,14 @@ def headlines(headers, company_list, max_days):
                 if days_visited > max_days:
                     print(f"Maximum Days Reached For {company}")
                     break
-
-            headline = " ".join(row.xpath(".//a[@target='_blank']/text()"))
-            url = row.xpath(".//a[@target='_blank']/@href")
+            #print(row.xpath(".//a[@target='_blank']"))
+            headline = row.xpath(".//a[@target='_blank']/text()")
             if headline:
+                headline = headline[0]
+                url = row.xpath(".//a[@target='_blank']/@href")
                 data.append([cur_date, cur_time, company, headline, url[0]])
+            else:
+                print(f"Private News")
+
 
     return pd.DataFrame(data, columns=["Date", "Time", "Company", "Headline", "URL"])
