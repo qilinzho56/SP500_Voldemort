@@ -161,6 +161,7 @@ def test_train_prep(combined_df):
 
     return X_train, X_test, y_train, y_test
 
+
 def rnf_predict(X_train, X_test, y_train, y_test):
     model = RandomForestClassifier(n_estimators=200, min_samples_split=100, random_state=1)
     model.fit(X_train, y_train)
