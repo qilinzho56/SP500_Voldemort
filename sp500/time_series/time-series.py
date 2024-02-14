@@ -3,12 +3,10 @@ import requests
 import numpy as np
 import yfinance as yf
 from datetime import datetime
-import sklearn
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import (
-    confusion_matrix,
     accuracy_score,
     precision_score,
     recall_score,
