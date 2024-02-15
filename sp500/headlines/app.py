@@ -9,3 +9,5 @@ if __name__ == "__main__":
     display.run_window1(headers)
     display.update_window2()
     display.run_window2()
+    display.update_window3()
+    display.run_window3()

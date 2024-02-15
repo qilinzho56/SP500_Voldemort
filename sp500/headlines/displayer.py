@@ -1,6 +1,12 @@
+# PySimpleGUI referenced https://www.tutorialspoint.com/pysimplegui/index.htm
 from sp500.headlines.scraper import headlines
 import PySimpleGUI as sg
 import webbrowser
+import matplotlib.pyplot as plt
+import numpy as np
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from sp500.time_series.time_series import load_ticker_data, time_rnf_model
+from sp500.visualization.company_profile import company_index_exhibit
 
 FONT = {"Arial Bold", 16}
 sg.set_options(font=FONT)
@@ -11,6 +17,7 @@ class TickerApplication:
         self.tickers = []
         self.window1()
         self.window2()
+        self.window3 = None
 
     def window1(self):
         self.lst = sg.Listbox(
@@ -35,7 +42,7 @@ class TickerApplication:
 
     def window2(self):
         self.news_data = None
-
+    
     def run_window1(self, headers):
         while True:
             event, values = self.window1.read()
@@ -78,7 +85,8 @@ class TickerApplication:
                     expand_x=True,
                     enable_events=True,
                     key="-TABLE-",
-                )
+                ),
+                sg.Button("For More Detailed Analysis"),
             ]
         ]
 
@@ -101,3 +109,40 @@ class TickerApplication:
                     webbrowser.open(url)
 
         self.window2.close()
+
+    def create_row_layout(self, df, title, font):
+        headings = df.columns.tolist()
+        values = df.iloc[0].tolist()
+        layout = [[sg.Text(title, font=FONT, justification='center')]]
+        for head, value in zip(headings, values):
+            layout.append([sg.Text(f"{head}:", font=FONT), sg.InputText(value, font=FONT, disabled=True)])
+        return layout
+
+    def update_window3(self):
+        company_tabs = []
+
+        for company in self.tickers:
+            df1, df2, df3, df4, df5 = company_index_exhibit(company)
+
+            company_overview_layout = self.create_row_layout(df1, f"{company} - Company Overview", FONT)
+            financial_performance_layout = self.create_row_layout(df2, f"{company} - Financial Performance", FONT)
+            cash_flow_layout = self.create_row_layout(df3, f"{company} - Cash Flow Analysis", FONT)
+            profitability_efficiency_layout = self.create_row_layout(df4, f"{company} - Profitability Efficiency Analysis", FONT)
+            pe_metrics_layout = self.create_row_layout(df5, f"{company} - PE Metrics", FONT)
+
+            tab_layout = company_overview_layout + financial_performance_layout + cash_flow_layout + profitability_efficiency_layout + pe_metrics_layout
+
+            company_tab = sg.Tab(company, tab_layout, font=FONT)
+            company_tabs.append(company_tab)
+
+        group_layout = [[sg.TabGroup([company_tabs], enable_events=True, font=FONT)]]
+
+        self.window3 = sg.Window("Company Data Overview", group_layout, size=(1400, 1000), font=FONT, finalize=True)
+
+    def run_window3(self):
+        while True:
+            event, values = self.window3.read()
+            if event == sg.WIN_CLOSED:
+                break
+        self.window3.close()
+
