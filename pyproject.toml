@@ -7,7 +7,7 @@ readme = "README.md"
 packages = [{include = "sp500"}]
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.12"
 lxml = "^4.9.1"
 requests = "^2.28.1"
 ipython = "^8.7.0"
@@ -20,6 +20,8 @@ en_core_web_sm = { url = "https://github.com/explosion/spacy-models/releases/dow
 spacytextblob = { url = "https://github.com/SamEdwardes/spacytextblob/archive/refs/tags/v4.0.0.tar.gz" }
 numpy = "^1.20.2"
 wordcloud = "^1.9.3"
+scikit-learn = "^1.0.2"
+yfinance = "^0.2.36"
 
 [tool.poetry.group.dev.dependencies]
 black = "^22.12.0"

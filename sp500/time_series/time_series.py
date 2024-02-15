@@ -194,3 +194,15 @@ def valuation_metric(rnf_preds, y_test):
     print(f"Test Positive Percentage = {original_pos_percent}")
     print(f"Recall = {recall}")
     print(f"F1 Score = {f1score}")
+    return (accuracy, precision, original_pos_percent, recall, f1score)
+
+
+def time_rnf_model(company):
+    ticker_df = load_ticker_data(company)
+    macro_indicators = preprocess_macro_data(fetch_macro_indicators())
+    combined_df = ticker_macro_merge(ticker_df, macro_indicators)
+    X_train, X_test, y_train, y_test = test_train_prep(combined_df)
+    rnf_preds, model = rnf_predict(X_train, X_test, y_train, y_test)
+    scores = valuation_metric(rnf_preds, y_test)
+
+    return model, scores
