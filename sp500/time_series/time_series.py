@@ -3,15 +3,9 @@ import requests
 import numpy as np
 import yfinance as yf
 from datetime import datetime
-from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import (
-    accuracy_score,
-    precision_score,
-    recall_score,
-    f1_score
-)
+
 
 HORIZON = {
         "2D": 2,  
@@ -146,7 +140,11 @@ def ticker_macro_merge(ticker_df, macro_indicators):
     return ticker_df
 
 
-def test_train_prep(combined_df):
+def test_train_prep(company):
+    ticker_df = load_ticker_data(company)
+    macro_indicators = preprocess_macro_data(fetch_macro_indicators())
+    combined_df = ticker_macro_merge(ticker_df, macro_indicators)
+
     combined_df["Tomorrow"] = combined_df["Adj Close"].shift(-1)
     combined_df["Target"] = (combined_df["Tomorrow"] > combined_df["Adj Close"]).astype(int)  
     combined_df.replace('NA', pd.NA, inplace=True)
@@ -155,54 +153,14 @@ def test_train_prep(combined_df):
     y = combined_df["Target"]
 
     X = combined_df[combined_df.columns.difference(["Target", "Close Adj Close", "Adj Close", "Tomorrow", "Volume"])]
-    X = StandardScaler().fit_transform(X)
+    scaler = StandardScaler()
+    X_scaled = scaler.fit_transform(X)
+    X_scaled_df = pd.DataFrame(X_scaled, index=X.index, columns=X.columns)
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    X_train, X_test, y_train, y_test = train_test_split(X_scaled_df, y, test_size=0.2, random_state=42)
 
     return X_train, X_test, y_train, y_test
 
 
-def rnf_predict(X_train, X_test, y_train, y_test):
-    model = RandomForestClassifier(n_estimators=200, min_samples_split=100, random_state=1)
-    model.fit(X_train, y_train)
-
-    test_probs = model.predict_proba(X_test)
-    preds = (test_probs[:, 1] >= 0.58).astype(int)
-
-    index_range = np.arange(len(X_test))
-    y_test_series = pd.Series(y_test.array, index=index_range, name="Actual")
-
-    preds_series = pd.Series(preds, index=index_range, name="Predictions")
-    neg_probs = pd.Series(test_probs[:, 0], index=index_range, name="Negative_Probability")
-    pos_probs = pd.Series(test_probs[:, 1], index=index_range, name="Positive_Probability")
-
-    rnf_preds = pd.concat([y_test_series, preds_series, neg_probs, pos_probs], axis=1)
-
-    return rnf_preds, model
 
 
-def valuation_metric(rnf_preds, y_test):
-    y_preds = rnf_preds["Predictions"]
-    accuracy = accuracy_score(y_test, y_preds)
-    precision = precision_score(y_test, y_preds)
-    recall = recall_score(y_test, y_preds)
-    f1score = f1_score(y_test, y_preds)
-    original_pos_percent = (y_test == 1).mean() * 100
-
-    print(f"Accuracy = {accuracy}")
-    print(f"Precision = {precision}")
-    print(f"Test Positive Percentage = {original_pos_percent}")
-    print(f"Recall = {recall}")
-    print(f"F1 Score = {f1score}")
-    return (accuracy, precision, original_pos_percent, recall, f1score)
-
-
-def time_rnf_model(company):
-    ticker_df = load_ticker_data(company)
-    macro_indicators = preprocess_macro_data(fetch_macro_indicators())
-    combined_df = ticker_macro_merge(ticker_df, macro_indicators)
-    X_train, X_test, y_train, y_test = test_train_prep(combined_df)
-    rnf_preds, model = rnf_predict(X_train, X_test, y_train, y_test)
-    scores = valuation_metric(rnf_preds, y_test)
-
-    return model, scores
