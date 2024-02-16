@@ -33,7 +33,7 @@ def ann_model(input_shape):
     return model
 
 
-def train_predict(company, threshold=0.58, model_type="rnf"):
+def train_predict(company, threshold=0.5, model_type="rnf"):
     X_train, X_test, y_train, y_test = test_train_prep(company)
     if model_type == "rnf":
         rnf_clf= rnf_model()
@@ -76,5 +76,5 @@ def valuation_metric(y_test, y_preds):
 
 
 if __name__ == "__main__":
-    rnf_preds = train_predict(company="AAPL", model_type="ann")
-    valuation_metric(rnf_preds["Actual"], rnf_preds["Predictions"])
+    ann_preds = train_predict(company="AAPL", model_type="ann")
+    valuation_metric(ann_preds["Actual"], ann_preds["Predictions"])
