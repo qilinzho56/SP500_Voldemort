@@ -153,14 +153,11 @@ def test_train_prep(company):
     y = combined_df["Target"]
 
     X = combined_df[combined_df.columns.difference(["Target", "Close Adj Close", "Adj Close", "Tomorrow", "Volume"])]
-    X = StandardScaler().fit_transform(X)
+    scaler = StandardScaler()
+    X_scaled = scaler.fit_transform(X)
+    X_scaled_df = pd.DataFrame(X_scaled, index=X.index, columns=X.columns)
 
-    X_train_indices, X_test_indices, y_train_indices, y_test_indices = train_test_split(X.index, y.index, test_size=0.2, random_state=42)
-
-    X_train = X.loc[X_train_indices]
-    X_test = X.loc[X_test_indices]
-    y_train = y.loc[y_train_indices]
-    y_test = y.loc[y_test_indices]
+    X_train, X_test, y_train, y_test = train_test_split(X_scaled_df, y, test_size=0.2, random_state=42)
 
     return X_train, X_test, y_train, y_test
 

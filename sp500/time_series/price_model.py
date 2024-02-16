@@ -11,14 +11,14 @@ import tensorflow as tf
 from tensorflow import keras
 tf.random.set_seed(42)
 
-def rnf_model(n_estimators=200, min_samples_split=100, random_state=42):
-    model = RandomForestClassifier(n_estimators, min_samples_split, random_state)
+def rnf_model():
+    model = RandomForestClassifier(n_estimators=200, min_samples_split=100, random_state=42)
     return model
 
 
 def ann_model(input_shape):
     model = keras.models.Sequential([
-        keras.layers.Flatten(input_shape=input_shape),
+        keras.layers.Flatten(input_shape=[input_shape]),
         keras.layers.Dense(300, activation="relu"),
         keras.layers.Dense(100, activation="relu"),
         keras.layers.Dense(1, activation="sigmoid")  
@@ -33,22 +33,30 @@ def ann_model(input_shape):
     return model
 
 
-def train_predict(company, threshold=0.5, model_type="rnf"):
+def train_predict(company, threshold=0.58, model_type="rnf"):
     X_train, X_test, y_train, y_test = test_train_prep(company)
     if model_type == "rnf":
-        rnf_clf = rnf_model.fit(X_train, y_train)
+        rnf_clf= rnf_model()
+        rnf_clf.fit(X_train, y_train)
         test_probs = rnf_clf.predict_proba(X_test)
         preds = (test_probs[:, 1] >= threshold).astype(int)
+        neg_probs = pd.Series(test_probs[:, 0], index=y_test.index)
+        pos_probs = pd.Series(test_probs[:, 1], index=y_test.index)
     elif model_type == "ann":
-        ann_clf = ann_model.fit(X_train, y_train, epochs=30)
-        test_probs = ann_clf.predict(X_test)
+        ann_clf = ann_model(X_train.shape[1])
+        ann_clf.fit(X_train, y_train, epochs=30)
+        test_probs = ann_clf.predict(X_test).flatten()
         preds = (test_probs >= threshold).astype(int)
+        neg_probs = pd.Series(1 - test_probs, index=y_test.index)
+        pos_probs = pd.Series(test_probs, index=y_test.index)
 
-    preds_series = pd.Series(preds, index=y_test.index, name="Predictions")
-    neg_probs = pd.Series(test_probs[:, 0], name="Negative_Probability")
-    pos_probs = pd.Series(test_probs[:, 1], name="Positive_Probability")
+    preds_summary = pd.DataFrame({
+        "Actual": y_test,
+        "Predictions": preds,
+        "Negative_Probability": neg_probs,
+        "Positive_Probability": pos_probs
+    }, index=y_test.index)
 
-    preds_summary = pd.concat([y_test, preds_series, neg_probs, pos_probs], axis=1)
     return preds_summary 
 
 
@@ -68,5 +76,5 @@ def valuation_metric(y_test, y_preds):
 
 
 if __name__ == "__main__":
-    rnf_preds = train_predict(company="AAPL")
-    valuation_metric( rnf_preds[0], rnf_preds["Predictions"])
+    rnf_preds = train_predict(company="AAPL", model_type="ann")
+    valuation_metric(rnf_preds["Actual"], rnf_preds["Predictions"])
