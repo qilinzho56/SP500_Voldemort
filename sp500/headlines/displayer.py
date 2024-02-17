@@ -75,7 +75,7 @@ class TickerApplication:
 
         self.window1.close()
 
-    def window2(self):
+    def update_window2(self):
         headings = self.news_data.columns.tolist()
         self.data_overview = self.news_data.values.tolist()
         layout = [
@@ -123,7 +123,7 @@ class TickerApplication:
             layout.append([sg.Text(f"{head}:"), sg.InputText(value, disabled=True)])
         return layout
 
-    def window3(self):
+    def update_window3(self):
         company_tabs = []
 
         for company in self.tickers:
