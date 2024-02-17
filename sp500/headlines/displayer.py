@@ -11,12 +11,20 @@ from sp500.visualization.company_profile import company_index_exhibit
 FONT = {"Arial Bold", 16}
 sg.set_options(font=FONT)
 
-
 class TickerApplication:
-    def __init__(self):
+    def __init__(self): 
+        """
+        Initialized the GUI with windows and parameters that need to be 
+        updated continuously.
+
+        window1: user input tickers 
+        window2: news and URLs exhibit
+        window3: company profile and stock movement plots
+        """
         self.tickers = []
+        self.news_data = None
         self.window1()
-        self.window2()
+        self.window2 = None
         self.window3 = None
 
     def window1(self):
@@ -39,9 +47,6 @@ class TickerApplication:
             [sg.Submit()],
         ]
         self.window1 = sg.Window("Ticker Application", layout, size=(800, 400))
-
-    def window2(self):
-        self.news_data = None
     
     def run_window1(self, headers):
         while True:
@@ -70,7 +75,7 @@ class TickerApplication:
 
         self.window1.close()
 
-    def update_window2(self):
+    def window2(self):
         headings = self.news_data.columns.tolist()
         self.data_overview = self.news_data.values.tolist()
         layout = [
@@ -110,34 +115,34 @@ class TickerApplication:
 
         self.window2.close()
 
-    def create_row_layout(self, df, title, font):
+    def create_row_layout(self, df, title):
         headings = df.columns.tolist()
         values = df.iloc[0].tolist()
-        layout = [[sg.Text(title, font=FONT, justification='center')]]
+        layout = [[sg.Text(title, justification='center')]]
         for head, value in zip(headings, values):
-            layout.append([sg.Text(f"{head}:", font=FONT), sg.InputText(value, font=FONT, disabled=True)])
+            layout.append([sg.Text(f"{head}:"), sg.InputText(value, disabled=True)])
         return layout
 
-    def update_window3(self):
+    def window3(self):
         company_tabs = []
 
         for company in self.tickers:
             df1, df2, df3, df4, df5 = company_index_exhibit(company)
 
-            company_overview_layout = self.create_row_layout(df1, f"{company} - Company Overview", FONT)
-            financial_performance_layout = self.create_row_layout(df2, f"{company} - Financial Performance", FONT)
-            cash_flow_layout = self.create_row_layout(df3, f"{company} - Cash Flow Analysis", FONT)
-            profitability_efficiency_layout = self.create_row_layout(df4, f"{company} - Profitability Efficiency Analysis", FONT)
-            pe_metrics_layout = self.create_row_layout(df5, f"{company} - PE Metrics", FONT)
+            company_overview_layout = self.create_row_layout(df1, f"{company} - Company Overview")
+            financial_performance_layout = self.create_row_layout(df2, f"{company} - Financial Performance")
+            cash_flow_layout = self.create_row_layout(df3, f"{company} - Cash Flow Analysis")
+            profitability_efficiency_layout = self.create_row_layout(df4, f"{company} - Profitability Efficiency Analysis")
+            pe_metrics_layout = self.create_row_layout(df5, f"{company} - PE Metrics")
 
             tab_layout = company_overview_layout + financial_performance_layout + cash_flow_layout + profitability_efficiency_layout + pe_metrics_layout
 
-            company_tab = sg.Tab(company, tab_layout, font=FONT)
+            company_tab = sg.Tab(company, tab_layout)
             company_tabs.append(company_tab)
 
-        group_layout = [[sg.TabGroup([company_tabs], enable_events=True, font=FONT)]]
+        group_layout = [[sg.TabGroup([company_tabs], enable_events=True)]]
 
-        self.window3 = sg.Window("Company Data Overview", group_layout, size=(1400, 1000), font=FONT, finalize=True)
+        self.window3 = sg.Window("Company Data Overview", group_layout, size=(1400, 1000), finalize=True)
 
     def run_window3(self):
         while True:
