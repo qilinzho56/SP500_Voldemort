@@ -21,14 +21,14 @@ Details the data sources and analytical methods used in the project.
 - **Stock Data**: Collected through Yahoo Finance API.
 - **Economic Indicators**: Fetched from DBnomics API for FED and OECD data.
 
-### Sentiment Analysis
+### Factor Analysis
+- Explores the relationship between expected returns and systematic risk.
+  
+#### Sentiment Analysis
 - Implemented to understand market sentiment's impact on stock movements.
 
-### Time-Series Data
+#### Time-Series Data
 - Analyzed to capture patterns and trends over time.
-
-## Factor Analysis
-- Explores the relationship between expected returns and systematic risk.
 
 ## Package Exploration
 - Examination of various Python libraries for data analysis and machine learning.
