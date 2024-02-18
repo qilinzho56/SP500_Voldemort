@@ -4,12 +4,12 @@
 This repository hosts the code 🧑‍💻 and documentation 📄 for a machine learning project aimed at predicting stock market movements. We use various data sources 📊, factor analysis 🔍, and machine learning techniques 🤖, including sentiment analysis and time-series forecasting.
 
 ## 📚 Table of Contents
-- [Literature Review](##literature-review) 📖
-- [Package Exploration](##package-exploration) 🔎
-- [Data Collection, Analysis, and Evaluation](##data-collection-analysis-and-evaluation) 🗂️
-- [Factor Analysis](##factor-analysis) 📈
-- [Development Process](##development-process) 💻
-- [What to Do Next?](##what-to-do-next) ❓
+- [Literature Review](#-literature-review-)
+- [Package Exploration](#-package-exploration-)
+- [Data Collection, Analysis, and Evaluation](#-data-collection-analysis-and-evaluation-)
+- [Factor Analysis](#-factor-analysis-)
+- [Development Process](#-development-process-)
+- [What to Do Next?](#-what-to-do-next-)
 
 ![Project Scheme](Scheme.png)
 
@@ -42,4 +42,4 @@ Outlines the forthcoming steps in the project's lifecycle 🛤️.
 - Sentiment Analysis: Beichi Wu, Sizhe Ding, Yolanda Yang 
 - Time-Series Modelling: Qilin Zhou, Yolanda Yang 
 
-👨‍💼👨‍💼👩‍💼👩‍💼🕒👥
+
