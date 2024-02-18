@@ -40,6 +40,6 @@ Outlines the forthcoming steps in the project's lifecycle.
 ## Contributors
 - Data Collection and GUI Realization: Qilin Zhou
 - Sentiment Analysis: Beichi Wu, Sizhe Ding, Yolanda Yang
-- Time-Series Data: Qilin Zhou, Yolanda Yang
+- Time-Series Modelling: Qilin Zhou, Yolanda Yang
 
 
