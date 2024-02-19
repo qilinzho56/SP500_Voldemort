@@ -17,6 +17,18 @@ HORIZON = {
 
 # Import Macro Factors
 def scrapeindicator(url):
+    """
+    Scrape and extract related macro-economic indicators and values
+    using DBnomics API
+
+    Parameters
+    ----------
+    url: url link for the specific macro observation
+    
+    Returns
+    -------
+    indicators_df: a dataframe with macro indicator values and time as index
+    """
     response = requests.get(url)
     r_json = response.json()
     periods = r_json["series"]["docs"][0]["period"]
@@ -28,6 +40,13 @@ def scrapeindicator(url):
 
 
 def fetch_macro_indicators():
+    """
+    Fetch macro indicators using the scrapeindicator help function
+    
+    Returns
+    -------
+    macro_indicators: a dictionary that maps each dataframe to its corresponding indicator
+    """
     macro_indicators = {
         "us_1m_rate": "https://api.db.nomics.world/v22/series/FED/H15/RIFLGFCM01_N.B?observations=1",
         "us_3m_rate": "https://api.db.nomics.world/v22/series/FED/H15/RIFLGFCM03_N.B?observations=1",
@@ -57,6 +76,17 @@ def quarter_to_date(quarter):
     
 
 def preprocess_macro_data(macro_indicators):
+    """
+    Rename dataframe's columns and reset index to datetime
+
+    Parameters
+    ----------
+    macro_indicators: a indicator-dataframe dictionary
+    
+    Returns
+    -------
+    macro_indicators: a macro_indicator dict with updated values
+    """
    # macro_indicators["qtr_unemployment"].index = macro_indicators["qtr_unemployment"].index.map(quarter_to_date)
     macro_indicators["us_1m_rate"].rename(columns={'Selected Interest Rates': 'US_1M_Interest_Rate'}, inplace=True)
     macro_indicators["us_3m_rate"].rename(columns={'Selected Interest Rates': 'US_3M_Interest_Rate'}, inplace=True)
