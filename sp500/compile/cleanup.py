@@ -31,9 +31,20 @@ INDEX_IGNORE = (
 )
 
 def cleanup(labeled_data):
+    """
+    To filter out words that matches INDEX_IGNORE
+
+    Inputs:
+        labeled_data: DataFrame
+
+    Returns:
+        labeled_data: DataFrame
+    """
     
+    #create new column
     labeled_data["Cleaned Headline"] = None
 
+    #iterate through each row of dataframe
     for index, row in labeled_data.iterrows():
         
         headline = row["Headline"].split()

@@ -2150,12 +2150,12 @@ files = [
 
 [[package]]
 name = "spacytextblob"
-version = "4.0.0"
-description = "A TextBlob sentiment analysis pipeline component for spaCy."
+version = "3.0.1"
+description = "A TextBlob sentiment analysis pipeline compponent for spaCy"
 optional = false
-python-versions = "^3.7"
+python-versions = "^3.6"
 files = [
-    {file = "v4.0.0.tar.gz", hash = "sha256:946bbc3961f2617559c38af350cb1169d3553347e21b103e19cda1051cdd9fa9"},
+    {file = "v3.0.1.tar.gz", hash = "sha256:b1bb1b90a7803c513ba3656bf8af9f38b4d640fa958dd14150da8eb20f589c0e"},
 ]
 
 [package.dependencies]
@@ -2164,7 +2164,7 @@ textblob = ">=0.15.3,<0.16.0"
 
 [package.source]
 type = "url"
-url = "https://github.com/SamEdwardes/spacytextblob/archive/refs/tags/v4.0.0.tar.gz"
+url = "https://github.com/SamEdwardes/spacytextblob/archive/refs/tags/v3.0.1.tar.gz"
 
 [[package]]
 name = "srsly"
@@ -2418,13 +2418,13 @@ files = [
 
 [[package]]
 name = "urllib3"
-version = "2.2.0"
+version = "2.2.1"
 description = "HTTP library with thread-safe connection pooling, file post, and more."
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "urllib3-2.2.0-py3-none-any.whl", hash = "sha256:ce3711610ddce217e6d113a2732fafad960a03fd0318c91faa79481e35c11224"},
-    {file = "urllib3-2.2.0.tar.gz", hash = "sha256:051d961ad0c62a94e50ecf1af379c3aba230c66c710493493560c0c223c49f20"},
+    {file = "urllib3-2.2.1-py3-none-any.whl", hash = "sha256:450b20ec296a467077128bff42b73080516e71b56ff59a60a02bef2232c4fa9d"},
+    {file = "urllib3-2.2.1.tar.gz", hash = "sha256:d0570876c61ab9e520d776c38acbbb5b05a776d3f9ff98a5c8fd5162a444cf19"},
 ]
 
 [package.extras]
@@ -2615,4 +2615,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.9,<4.0"
-content-hash = "de9be8575a8a5623be3e1c8b11ffa7647853029d32ff9946a8005817c0daee53"
+content-hash = "a27ddb45c403fbefe6e469660701fb19cad067720624de76325a1f3ccf0128d9"
