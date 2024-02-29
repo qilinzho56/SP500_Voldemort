@@ -37,4 +37,7 @@ Documentation of the development steps, including data collection and GUI creati
 ## ❓ What to Do Next?
 Outlines the forthcoming steps in the project's lifecycle
 
+## Reference
+- Hutto, C.J. & Gilbert, E.E. (2014). VADER: A Parsimonious Rule-based Model for Sentiment Analysis of Social Media Text. Eighth International Conference on Weblogs and Social Media (ICWSM-14). Ann Arbor, MI, June 2014.
+- Loughran, T. and McDonald, B. (2011), ``When Is a Liability Not a Liability? Textual Analysis, Dictionaries, and 10-Ks.'' The Journal of Finance, 66: 35-65.
 

@@ -10,14 +10,13 @@ def add_new_column(dict, df, row_index):
     According to part of speech of words, we add them
     to the dataframe
 
-    Parameters
-    ----------
-    dict: dict
-        A dictionary containing part of speech and corresponding words
-    df: dataframe
-        The dataframe we import
-    row_index: int
-        row index
+    Inputs:
+        dict: dict
+            A dictionary containing part of speech and corresponding words
+        df: dataframe
+            The dataframe we import
+        row_index: int
+            row index
     """
 
     for pos in dict:

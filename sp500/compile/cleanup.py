@@ -1,4 +1,3 @@
-import json
 import pandas as pd
 
 INDEX_IGNORE = (
@@ -27,7 +26,9 @@ INDEX_IGNORE = (
     "was",
     "were",
     "will",
-    "with"
+    "with",
+    "i",
+    "she"
 )
 
 def cleanup(labeled_data):
@@ -55,6 +56,7 @@ def cleanup(labeled_data):
                 cleaned_headline.append(word)
         
         labeled_data.at[index, "Cleaned Headline"] = ' '.join(cleaned_headline)
+        labeled_data["Cleaned Headline"] = labeled_data["Cleaned Headline"].str.lower()
     
     return labeled_data
 

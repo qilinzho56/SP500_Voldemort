@@ -17,7 +17,7 @@ pandas = "^1.5.3"
 matplotlib = "^3.7.0"
 PySimpleGUI = "^4.60.0"
 en_core_web_sm = { url = "https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.7.1/en_core_web_sm-3.7.1.tar.gz" }
-spacytextblob = { url = "https://github.com/SamEdwardes/spacytextblob/archive/refs/tags/v3.0.1.tar.gz" }
+textblob = "^0.15.3"
 numpy = "^1.20.2"
 wordcloud = "^1.9.3"
 scikit-learn = "^1.0.2"
@@ -25,6 +25,8 @@ yfinance = "^0.2.36"
 
 [tool.poetry.group.dev.dependencies]
 black = "^22.12.0"
+textblob-fr = "^0.2.0"
+textblob-de = "^0.4.3"
 
 [build-system]
 requires = ["poetry-core"]
