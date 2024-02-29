@@ -9,7 +9,6 @@ This repository hosts the code 🧑‍💻 and documentation 📄 for a machine 
 - [Data Collection, Analysis, and Evaluation](#data-collection-analysis-and-evaluation)
 - [Factor Analysis](#factor-analysis)
 - [Development Process](#development-process)
-- [What to Do Next?](#what-to-do-next)
 
 ![Project Scheme](Scheme.png)
 
@@ -36,6 +35,52 @@ Documentation of the development steps, including data collection and GUI creati
 
 ## ❓ What to Do Next?
 Outlines the forthcoming steps in the project's lifecycle
+
+## How to Use?
+### 1.0 Download
+
+```shell
+pip install --user -U nltk
+```
+
+### 1.1 File Structure
+```python
+sp500/
+    compile/
+        __init__.py
+        cleanup.py
+        pos.py
+    headlines/
+        __init__.py
+        app.py
+        displayer.py
+        scraper.py
+    sa/
+        data/
+        __init__.py
+        analyzer.py
+        sa.py
+        test.py
+        train_classifier.py
+    time_series/
+        price_model.py
+        time_series.py
+    visualization/
+        __init__.py
+        company_profile.py
+        create_word_clooud.py
+        datatypes.py
+poetry.lock
+pyproject.toml
+README.md
+Scheme.png
+
+
+```
+### 1.2 Instruction
+1. 
+2. 
+
 
 ## Reference
 - Hutto, C.J. & Gilbert, E.E. (2014). VADER: A Parsimonious Rule-based Model for Sentiment Analysis of Social Media Text. Eighth International Conference on Weblogs and Social Media (ICWSM-14). Ann Arbor, MI, June 2014.
