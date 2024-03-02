@@ -124,3 +124,4 @@ def plot_stock_data_interactive(company):
         layout=layout,
     )
     fig.show()
+
