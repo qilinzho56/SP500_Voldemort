@@ -58,5 +58,4 @@ def headlines(headers, company_list, max_days):
             else:
                 print(f"Private News")
 
-
     return pd.DataFrame(data, columns=["Date", "Time", "Company", "Headline", "URL"])

@@ -2,21 +2,17 @@ import pandas as pd
 import requests
 import numpy as np
 import yfinance as yf
+from fredapi import Fred
 from datetime import datetime
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 
 
-HORIZON = {
-        "2D": 2,  
-        "5D": 5,
-        "3M": 63,
-        "6M": 126,
-        "1Y": 252
-    }
+HORIZON = {"2D": 2, "5D": 5, "3M": 63, "6M": 126, "1Y": 252}
+
 
 # Import Macro Factors
-def scrapeindicator(url):
+def db_scrapeindicator(url):
     """
     Scrape and extract related macro-economic indicators and values
     using DBnomics API
@@ -24,107 +20,146 @@ def scrapeindicator(url):
     Parameters
     ----------
     url: url link for the specific macro observation
-    
+
     Returns
     -------
-    indicators_df: a dataframe with macro indicator values and time as index
+    indicator_df: a dataframe with DBnomics macro indicator values and time as index
     """
     response = requests.get(url)
     r_json = response.json()
     periods = r_json["series"]["docs"][0]["period"]
     values = r_json["series"]["docs"][0]["value"]
     dataset = r_json["series"]["docs"][0]["dataset_name"]
-    indicators_df = pd.DataFrame(values,index=periods)
-    indicators_df.columns = [dataset]
-    return indicators_df
+    indicator_df = pd.DataFrame(values, index=periods)
+    indicator_df.columns = [dataset]
+    indicator_df.index = pd.to_datetime(indicator_df.index)
+
+    return indicator_df
+
+
+def fred_scrapeindicator(fred_key, series_name):
+    """
+    Scrape and extract related macro-economic indicators and values
+    using FRED API
+
+    Parameters
+    ----------
+    fred_key: FRED API key
+    series_name: FRED series name
+
+    Returns
+    -------
+    indicator_df: a dataframe with FRED macro indicator values and time as index
+    """
+    fred = Fred(fred_key)
+    series = fred.get_series(series_name)
+
+    indicator_df = pd.DataFrame(series)
+
+    # For monthly data, create a year-month column to facilitate merging with data of daily frequency
+    if fred.search(series_name)["frequency_short"][0] == "M":
+        indicator_df["Year_Month"] = indicator_df.index.to_period("M")
+
+    return indicator_df
 
 
 def fetch_macro_indicators():
     """
     Fetch macro indicators using the scrapeindicator help function
-    
+
+    Parameters
+    ----------
+    fred_key: FRED API key
+
     Returns
     -------
     macro_indicators: a dictionary that maps each dataframe to its corresponding indicator
     """
-    macro_indicators = {
+    db_macro_indicators = {
         "us_1m_rate": "https://api.db.nomics.world/v22/series/FED/H15/RIFLGFCM01_N.B?observations=1",
         "us_3m_rate": "https://api.db.nomics.world/v22/series/FED/H15/RIFLGFCM03_N.B?observations=1",
         "us_1y_rate": "https://api.db.nomics.world/v22/series/FED/H15/RIFLGFCY01_N.B?observations=1",
         "us_dollar_exch": "https://api.db.nomics.world/v22/series/FED/H10/JRXWTFB_N.B?observations=1",
-       # "qtr_inflation": "https://api.db.nomics.world/v22/series/OECD/MEI/USA.CSINFT02.STSA.Q?observations=1",
-       # "qtr_unemployment": "https://api.db.nomics.world/v22/series/OECD/MEI/USA.LRUN64TT.STSA.Q?observations=1",
     }
 
-    for key, url in macro_indicators.items():
-        macro_indicators[key] = scrapeindicator(url)
+    macro_indicators = {}
+    for key, url in db_macro_indicators.items():
+        macro_indicators[key] = db_scrapeindicator(url)
+
+    fred_key = input("What is your FRED key? ")
+    fred_macro_indicators = ["T10YIE", "UNRATE"]
+
+    for key in fred_macro_indicators:
+        macro_indicators[key] = fred_scrapeindicator(fred_key=fred_key, series_name=key)
+
     return macro_indicators
 
 
-def quarter_to_date(quarter):
-    year, qtr = quarter.split('-')
-    if qtr == 'Q1':
-        return f'{year}-01-01'
-    elif qtr == 'Q2':
-        return f'{year}-04-01'
-    elif qtr == 'Q3':
-        return f'{year}-07-01'
-    elif qtr == 'Q4':
-        return f'{year}-10-01'
-    else:
-        return None
-    
-
 def preprocess_macro_data(macro_indicators):
     """
-    Rename dataframe's columns and reset index to datetime
+    Updates dataframe columns in macro_indicators
 
     Parameters
     ----------
     macro_indicators: a indicator-dataframe dictionary
-    
-    Returns
-    -------
-    macro_indicators: a macro_indicator dict with updated values
     """
-   # macro_indicators["qtr_unemployment"].index = macro_indicators["qtr_unemployment"].index.map(quarter_to_date)
-    macro_indicators["us_1m_rate"].rename(columns={'Selected Interest Rates': 'US_1M_Interest_Rate'}, inplace=True)
-    macro_indicators["us_3m_rate"].rename(columns={'Selected Interest Rates': 'US_3M_Interest_Rate'}, inplace=True)
-    macro_indicators["us_1y_rate"].rename(columns={'Selected Interest Rates': 'US_1Y_Interest_Rate'}, inplace=True)
-   # macro_indicators["qtr_inflation"].rename(columns={'Main Economic Indicators Publication': 'Quarterly_Inflation'}, inplace=True)
-   # macro_indicators["qtr_unemployment"].rename(columns={"Main Economic Indicators Publication": "Quarterly_UnEmploy"}, inplace=True)
-
-    for dataframe in macro_indicators.values():
-        dataframe.index = pd.to_datetime(dataframe.index)
-    
-    return macro_indicators
+    macro_indicators["us_1m_rate"].rename(
+        columns={"Selected Interest Rates": "US_1M_Interest_Rate"}, inplace=True
+    )
+    macro_indicators["us_3m_rate"].rename(
+        columns={"Selected Interest Rates": "US_3M_Interest_Rate"}, inplace=True
+    )
+    macro_indicators["us_1y_rate"].rename(
+        columns={"Selected Interest Rates": "US_1Y_Interest_Rate"}, inplace=True
+    )
+    macro_indicators["T10YIE"].rename(
+        columns={0: "US_TC_10Y_Inflation_Rate"}, inplace=True
+    )
+    macro_indicators["UNRATE"].rename(columns={0: "US_Unemployment_Rate"}, inplace=True)
 
 
 # Company Past Stock Performance
 def load_ticker_data(company):
+    """
+    Load company ticker data
+
+    Parameters
+    ----------
+    company: a string of company name
+
+    Returns
+    -------
+    ticker_df: a dataframe with ticker's daily general price and volume information
+    """
     end_date = datetime.now().strftime("%Y-%m-%d")
     ticker_df = yf.download(company, start="2010-01-01", end=end_date, interval="1d")
 
     return ticker_df
 
 
+# Financial indices: sma, ema_macd, rsi, obv
 def sma(ticker_df):
     for horizon, span in HORIZON.items():
         sma = ticker_df["Adj Close"].rolling(span).mean()
         sma_column = f"SMA_Ratio_{horizon}"
         ticker_df[sma_column] = ticker_df["Adj Close"] / sma
-        
+
     return ticker_df
+
 
 def ema_macd(ticker_df):
-    for horizon, span in HORIZON .items():
+    for horizon, span in HORIZON.items():
         ema = ticker_df["Adj Close"].ewm(span=span, adjust=False).mean()
         ema_column = f"EMA_Ratio_False_{horizon}"
-        ticker_df[ema_column] = ticker_df["Adj Close"] / ema  
+        ticker_df[ema_column] = ticker_df["Adj Close"] / ema
 
-    ticker_df["MACD"] = ticker_df["Adj Close"].ewm(span=26, adjust=False).mean() - ticker_df["Adj Close"].ewm(span=12, adjust=False).mean()
-        
+    ticker_df["MACD"] = (
+        ticker_df["Adj Close"].ewm(span=26, adjust=False).mean()
+        - ticker_df["Adj Close"].ewm(span=12, adjust=False).mean()
+    )
+
     return ticker_df
+
 
 # referenced from https://medium.com/@farrago_course0f/using-python-and-rsi-to-generate-trading-signals-a56a684fb1
 def rsi(ticker_df):
@@ -145,7 +180,9 @@ def rsi(ticker_df):
 
 
 def obv(ticker_df):
-    ticker_df["OBV"] = (np.sign(ticker_df['Adj Close'].diff()) * ticker_df['Volume']).cumsum()
+    ticker_df["OBV"] = (
+        np.sign(ticker_df["Adj Close"].diff()) * ticker_df["Volume"]
+    ).cumsum()
     return ticker_df
 
 
@@ -155,42 +192,73 @@ def update_ticker_price_indicators(ticker_df):
     rsi(ticker_df)
     obv(ticker_df)
 
- 
-def ticker_macro_merge(ticker_df, macro_indicators): 
+
+def ticker_macro_merge(ticker_df, macro_indicators):
+    """
+    Merger ticker_df with dataframes in macro_indicators
+
+    Parameters
+    ----------
+    ticker_df: ticker dataframe
+    macro_indicators: a dictionary with a macro_indicator as the key, the dataframe as the value
+
+    Returns
+    -------
+    ticker_df: a merged ticker dataframe
+    """
     for indicator, dataframe in macro_indicators.items():
-        ticker_df = ticker_df.merge(dataframe, left_index=True, right_index=True, how='left')
-        """
-        if "qtr" in indicator:
-            datetime_index = ticker_df.index
-            ticker_df["Quarter"] = ticker_df.index.strftime("%Y-%m")
-            dataframe["Quarter"] = dataframe.index.strftime("%Y-%m")
-            ticker_df = ticker_df.merge(dataframe, on="Quarter", how="left").set_index(datetime_index)
-        """
-   
+        # Special Case: merging with data on a monthly basis
+        if indicator == "UNRATE":
+            ticker_df["Year_Month"] = ticker_df.index.to_period("M")
+            index_reset = ticker_df.reset_index()
+            ticker_df = index_reset.merge(dataframe, on="Year_Month", how="left")
+            ticker_df.drop(columns=["Year_Month"], inplace=True)
+            ticker_df = ticker_df.set_index("Date")
+        else:
+            ticker_df = ticker_df.merge(
+                dataframe, left_index=True, right_index=True, how="left"
+            )
+
     return ticker_df
 
 
 def test_train_prep(company):
+    """
+    Prepare time-series training and testing data for the stock movement prediction model
+
+    Parameters
+    ----------
+    company: a string name
+
+    Returns
+    -------
+    X_train, X_test, y_train, y_test: the training, testing numpy arrays
+    """
     ticker_df = load_ticker_data(company)
-    macro_indicators = preprocess_macro_data(fetch_macro_indicators())
+    macro_indicators = fetch_macro_indicators()
+    preprocess_macro_data(macro_indicators)
     combined_df = ticker_macro_merge(ticker_df, macro_indicators)
 
     combined_df["Tomorrow"] = combined_df["Adj Close"].shift(-1)
-    combined_df["Target"] = (combined_df["Tomorrow"] > combined_df["Adj Close"]).astype(int)  
-    combined_df.replace('NA', pd.NA, inplace=True)
+    combined_df["Target"] = (combined_df["Tomorrow"] > combined_df["Adj Close"]).astype(
+        int
+    )
+    combined_df.replace("NA", pd.NA, inplace=True)
     combined_df = combined_df.dropna()
-    
+
     y = combined_df["Target"]
 
-    X = combined_df[combined_df.columns.difference(["Target", "Close Adj Close", "Adj Close", "Tomorrow", "Volume"])]
+    X = combined_df[
+        combined_df.columns.difference(
+            ["Target", "Close Adj Close", "Adj Close", "Tomorrow", "Volume"]
+        )
+    ]
     scaler = StandardScaler()
     X_scaled = scaler.fit_transform(X)
     X_scaled_df = pd.DataFrame(X_scaled, index=X.index, columns=X.columns)
 
-    X_train, X_test, y_train, y_test = train_test_split(X_scaled_df, y, test_size=0.2, random_state=42)
+    X_train, X_test, y_train, y_test = train_test_split(
+        X_scaled_df, y, test_size=0.2, random_state=42
+    )
 
     return X_train, X_test, y_train, y_test
-
-
-
-

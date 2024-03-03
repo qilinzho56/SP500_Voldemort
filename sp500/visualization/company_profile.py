@@ -24,6 +24,17 @@ COLUMNS = {
 }
 
 def profile_check(company):
+    """
+    Creata a dataframe to record company profile
+
+    Parameters
+    ----------
+    company: a string name
+
+    Returns
+    -------
+    company_profile_df: a company profile dataframe
+    """
     ticker = yf.Ticker(company)
     company_profile = pd.Series(ticker.info, index=None)
     company_profile_df = pd.DataFrame(company_profile).transpose()
@@ -34,6 +45,18 @@ def profile_check(company):
 
 
 def company_index_exhibit(company):
+    """
+    Divides the company profile to four major financial sections
+
+    Parameters
+    ----------
+    company: a string name
+
+    Returns
+    -------
+    overview, finance_overview, cash_flow, profit_efficiency, PE: 
+    four dataframes with finanical info from four perspectives
+    """
     company_profile_df = profile_check(company)
     overview = company_profile_df[["Ticker", "Industry", "Sector", "Market Cap"]]
     finance_overview = company_profile_df[["Revenue Growth", "Net Income", "EBITDA Margins"]]

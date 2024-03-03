@@ -22,6 +22,8 @@ numpy = "^1.20.2"
 wordcloud = "^1.9.3"
 scikit-learn = "^1.0.2"
 yfinance = "^0.2.36"
+tensorflow = "^2.15.0.post1"
+fredapi = "^0.5.1"
 
 [tool.poetry.group.dev.dependencies]
 black = "^22.12.0"
