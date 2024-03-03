@@ -4,7 +4,28 @@ import matplotlib.pyplot as plt
 from pathlib import Path
 from datatypes import GroupedColorFunc
 import os
-from sp500.compile.cleanup import INDEX_IGNORE
+import re
+import numpy as np
+from PIL import Image
+STOCK_TO_COMPANY = {
+    'AAPL': 'Apple',
+    'NVDA': 'Nvidia',
+    'BA': 'Boeing',
+    'GOOG': 'Google',
+    'AMZN': 'Amazon',
+    'STOCK':'Stock'
+}
+
+ADDITIONAL_STOPWORDS = ['stock','stocks','market','markets', 'Stock', 'Stocks']
+
+company_logo_paths = {
+    "AAPL": "../visualization/apple.png",
+    "AMZN": "../visualization/amazon.png",
+    "BA": "../visualization/boeing.png",
+    "GOOG": "../visualization/google.png",
+    "NVDA": "../visualization/nvidia.png",
+}
+
 def read_headlines():
     """
     This function reads headlines from a cleaned CSV file and stores them in a dictionary with the stock name as the key.
@@ -20,17 +41,18 @@ def read_headlines():
 
     # Read the CSV file into a pandas DataFrame
     df = pd.read_csv(filename)
-    # Classifier function to categorize polarity into 'positive', 'negative', or 'neutral'
-    def classifier_sentiment(label):
-        if label == 'P':
+
+    # Classifier function to categorize sentiment based on pos, neg scores and Label
+    def classifier_sentiment(row):
+        if row['pos'] > row['neg'] and row['Label (P, N, U-neutral)'] == 'P':
             return 'positive'
-        elif label == 'N':
+        elif row['pos'] < row['neg'] and row['Label (P, N, U-neutral)'] == 'N':
             return 'negative'
         else:
             return 'uncertain'
 
-    # Apply the classifier function to each row's Polarity value to create a new 'sentiment' column
-    df['sentiment'] = df['Label (P, N, U-neutral)'].apply(classifier_sentiment)
+    # Apply the classifier function to each row to create a new 'sentiment' column
+    df['sentiment'] = df.apply(classifier_sentiment, axis=1)
     # Initialize a dictionary to store the categorized headlines for each company
     company_headlines_sentiment = {}
 
@@ -48,12 +70,32 @@ def read_headlines():
             'uncertain': uncertain_headlines
         }
     # Return the dictionary containing the categorized headlines for each company
-    print(company_headlines_sentiment)
     return company_headlines_sentiment
 
 
+def add_companies_to_stopwords_with_regex(companies, stopwords):
+    """
+    Adds a list of company names to the stopwords set, using regex to catch variations.
 
-def extract_keywords_from_headlines(headlines):
+    Parameters:
+    - companies: A list of company names.
+    - stopwords: A set of words that should be added to the stopword list.
+
+    Returns:
+    - A set containing the updated stopwords.
+    """
+    for company in companies:
+        # We only care about the company names, not the stock symbols
+        # Create a regex pattern to match any word that contains the company name
+        regex = r'\b' + re.escape(company) + r'\b'
+        # Add words matched by regex to stopwords set
+        stopwords.update(set(filter(lambda w: re.match(regex, w, re.I), stopwords)))
+        # Directly add the company name as a stopword
+        stopwords.add(company)
+    return stopwords
+
+
+def extract_keywords_from_headlines(headlines, stopwords):
     """
     Extract keywords from headlines, excluding stopwords.
 
@@ -65,10 +107,10 @@ def extract_keywords_from_headlines(headlines):
         list of str: A list of keywords extracted from the headlines, excluding stopwords.
     """
     # Split headlines into words, exclude stopwords, and flatten the list
-    keywords = [word for headline in headlines for word in headline.split() if word.lower() not in INDEX_IGNORE ]
+    keywords = [word for headline in headlines for word in headline.split() if word.lower() not in stopwords]
     return keywords
 
-def create_sentiment_to_keywords_dict(company_headlines_sentiment):
+def create_sentiment_to_keywords_dict(company_headlines_sentiment, stopwords):
     """
     Creates a dictionary that maps sentiment categories (positive, negative)
     to lists of keywords extracted from headlines.
@@ -90,7 +132,7 @@ def create_sentiment_to_keywords_dict(company_headlines_sentiment):
         for sentiment, headlines in sentiments.items():
             if sentiment in sentiment_to_keywords:
                 # Extract keywords from headlines
-                keywords = extract_keywords_from_headlines(headlines)
+                keywords = extract_keywords_from_headlines(headlines, stopwords)
                 # Append keywords to the appropriate sentiment category
                 sentiment_to_keywords[sentiment].extend(keywords)
     return sentiment_to_keywords
@@ -121,6 +163,13 @@ def map_sentiments_to_colors(sentiment_to_keywords, sentiment_color_mapping):
 
     return color_to_keywords
 
+def transform_format(val):
+    if val == 0:
+        return 255
+    else:
+        return val
+
+
 def create_wordcloud():
     # Read headlines and perform sentiment analysis, returning a dictionary of {company: {sentiment: [headlines]}}
     headlines_dict = read_headlines()
@@ -129,19 +178,29 @@ def create_wordcloud():
     sentiment_color_mapping = {
         "positive": "#FF0000",  # Red for positive sentiment
         "negative": "#008000",  # Green for negative sentiment
-        "neutral": "#808080",   # Gray for neutral sentiment
+        "neutral": "#808080",  # Gray for neutral sentiment
     }
 
     # Define the path to the visualization directory
-    visualization_dir = os.path.join(os.path.dirname(__file__), '..', 'visualization')
+    visualization_dir = os.path.join(os.path.dirname(__file__), 'visualization')
 
     # Ensure the visualization directory exists
     if not os.path.exists(visualization_dir):
         os.makedirs(visualization_dir)
 
+    # Assume add_companies_to_stopwords_with_regex is implemented elsewhere and companies are extracted
+    companies = [name for pair in STOCK_TO_COMPANY.items() for name in pair]
+    custom_stopwords = add_companies_to_stopwords_with_regex(companies, set(STOPWORDS))
+    updated_stopwords = add_companies_to_stopwords_with_regex(ADDITIONAL_STOPWORDS,set(custom_stopwords) )
+
     for company, sentiments in headlines_dict.items():
         # Create a sentiment to keywords mapping for the current company
-        sentiment_to_keywords = create_sentiment_to_keywords_dict({company: sentiments})
+        sentiment_to_keywords = create_sentiment_to_keywords_dict({company: sentiments},updated_stopwords)
+
+        # Extract keywords excluding stopwords for each sentiment
+        for sentiment, headlines in sentiment_to_keywords.items():
+            sentiment_to_keywords[sentiment] = extract_keywords_from_headlines(headlines, updated_stopwords)
+
         # Map sentiments to colors
         color_to_keywords = map_sentiments_to_colors(sentiment_to_keywords, sentiment_color_mapping)
 
@@ -149,20 +208,23 @@ def create_wordcloud():
         color_func = GroupedColorFunc(color_to_keywords, 'grey')
 
         # Combine all headlines into a single long string for word cloud generation
-        all_headlines = ' '.join([' '.join(keywords) for keywords in color_to_keywords.values()])
+        all_headlines = ' '.join([' '.join(keywords) for keywords in sentiment_to_keywords.values()])
 
-        # Avoid including the company name in the word cloud
-        stopwords = set(STOPWORDS)
-        stopwords.update([company])
+        # Retrieve the path to the company's logo, create a mask from it and invert the mask colors for the word cloud
+        mask_path = company_logo_paths[company]
+        mask = np.array(Image.open(mask_path))
+        inverted_logo_mask = np.invert(mask)
+
 
         # Create a WordCloud instance
-        wordcloud = WordCloud(width=800, height=400, background_color='white', stopwords=stopwords, random_state=21).generate(all_headlines)
+        wordcloud = WordCloud(background_color='white', stopwords=updated_stopwords, mask=inverted_logo_mask, max_words=150, max_font_size=100,
+                              scale=2, contour_width=3, contour_color='black', random_state=21).generate(all_headlines)
 
         # Apply the color function to assign colors based on sentiment
         wordcloud.recolor(color_func=color_func)
 
         # Plot the word cloud image and save it
-        plt.figure(figsize=(10, 5))
+        plt.figure(figsize=(8, 8))
         plt.imshow(wordcloud, interpolation="bilinear")
         plt.axis('off')
 
