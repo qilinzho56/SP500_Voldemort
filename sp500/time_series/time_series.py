@@ -132,7 +132,7 @@ def load_ticker_data(company):
     ticker_df: a dataframe with ticker's daily general price and volume information
     """
     end_date = datetime.now().strftime("%Y-%m-%d")
-    ticker_df = yf.download(company, start="2010-01-01", end=end_date, interval="1d")
+    ticker_df = yf.download(company, start="2000-01-01", end=end_date, interval="1d")
 
     return ticker_df
 
@@ -232,7 +232,8 @@ def test_train_prep(company):
 
     Returns
     -------
-    X_train, X_test, y_train, y_test: the training, testing numpy arrays
+   all_data, X_train, X_test, y_train, y_test:  a 5-tuple containing a full preprocessed dataframe 
+   and the training/testing numpy arrays
     """
     ticker_df = load_ticker_data(company)
     macro_indicators = fetch_macro_indicators()
@@ -257,8 +258,9 @@ def test_train_prep(company):
     X_scaled = scaler.fit_transform(X)
     X_scaled_df = pd.DataFrame(X_scaled, index=X.index, columns=X.columns)
 
+    all_data = pd.concat([X_scaled_df, y], axis=1)
     X_train, X_test, y_train, y_test = train_test_split(
         X_scaled_df, y, test_size=0.2, random_state=42
     )
 
-    return X_train, X_test, y_train, y_test
+    return all_data, X_train, X_test, y_train, y_test
