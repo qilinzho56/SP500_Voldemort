@@ -1,4 +1,3 @@
-import pandas as pd
 
 INDEX_IGNORE = (
     "a",

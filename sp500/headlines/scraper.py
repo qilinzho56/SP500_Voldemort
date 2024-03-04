@@ -56,6 +56,6 @@ def headlines(headers, company_list, max_days):
                 url = row.xpath(".//a[@target='_blank']/@href")
                 data.append([cur_date, cur_time, company, headline, url[0]])
             else:
-                print(f"Private News")
+                print("Private News")
 
     return pd.DataFrame(data, columns=["Date", "Time", "Company", "Headline", "URL"])

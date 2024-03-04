@@ -1,5 +1,4 @@
 import itertools
-import pandas as pd
 
 
 def create_full_dict():
