@@ -240,6 +240,8 @@ def test_train_prep(company):
     preprocess_macro_data(macro_indicators)
     combined_df = ticker_macro_merge(ticker_df, macro_indicators)
 
+    combined_df = combined_df.apply(pd.to_numeric, errors='coerce')
+
     combined_df["Tomorrow"] = combined_df["Adj Close"].shift(-1)
     combined_df["Target"] = (combined_df["Tomorrow"] > combined_df["Adj Close"]).astype(
         int
@@ -247,7 +249,6 @@ def test_train_prep(company):
     
     # Imputed misising values with a rolling average in a window size of 5
     combined_df = combined_df.fillna(combined_df.rolling(window=5, min_periods=1).mean())
-    combined_df.replace("NA", pd.NA, inplace=True)
     combined_df = combined_df.dropna()
 
     y = combined_df["Target"]

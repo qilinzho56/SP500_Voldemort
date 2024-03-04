@@ -6,13 +6,20 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from sp500.time_series.visualization.company_profile import company_index_exhibit
-from sp500.time_series.stock_movement import plot_stock_data_interactive
+from sp500.time_series.visualization.stock_movement import plot_stock_data_interactive
 import webbrowser
 import os
+from pathlib import Path
+from tensorflow import keras
+import joblib
 
 FONT = {"Arial Bold", 16}
 sg.set_options(font=FONT)
 
+DIR = Path(__file__).parents[1] / "time_series"
+ANN = keras.models.load_model(DIR / "best_ann_model.h5")
+LSTM = keras.models.load_model(DIR / "best_lstm_model.h5")
+RNF = joblib.load(DIR /"best_rnf_model.joblib")
 # Define a function to draw the matplotlib figure object on the canvas
 def draw_figure(canvas, figure):
     tkcanvas = FigureCanvasTkAgg(figure, canvas)
@@ -165,12 +172,12 @@ class TickerApplication:
 
             img_byte, html_content = plot_stock_data_interactive(company)
             html_file_name = f"{company}_interactive_stock_plot.html"
-            html_file_path = os.path.abspath(html_file_name)
+            html_file_path = Path(__file__).parents[1] / "time_series"/ "visualization" / html_file_name
             
             with open(html_file_path, "w") as html_file:
                 html_file.write(html_content)
 
-            self.html_paths[company] = f"file://{html_file_path}"
+            self.html_paths[company] = f"file://{html_file_path.resolve()}"
 
             image_element = sg.Button("Click to see dynamic graph!", image_data=img_byte, 
                           key=f"MOVEIMAGE-{company}",

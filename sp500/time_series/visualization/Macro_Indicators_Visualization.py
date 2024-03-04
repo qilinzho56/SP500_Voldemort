@@ -1,4 +1,4 @@
-from sp500.time_series.time_series import preprocess_macro_data, fetch_macro_indicators
+from sp500.time_series.time_series_preprocessing import preprocess_macro_data, fetch_macro_indicators
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np

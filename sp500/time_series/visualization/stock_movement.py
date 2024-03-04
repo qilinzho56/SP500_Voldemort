@@ -1,6 +1,6 @@
 import plotly.graph_objects as go
 import plotly.io as pio
-from sp500.time_series.time_series import load_ticker_data, ema_macd, obv
+from sp500.time_series.time_series_preprocessing import load_ticker_data, ema_macd, obv
 import pandas as pd
 from datetime import datetime, timedelta
 

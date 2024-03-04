@@ -1,4 +1,4 @@
-from sp500.time_series.time_series import test_train_prep
+from sp500.time_series.time_series_preprocessing import test_train_prep
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 from sklearn.model_selection import RandomizedSearchCV, train_test_split
@@ -8,8 +8,11 @@ import numpy as np
 import tensorflow as tf
 from tensorflow import keras
 from scikeras.wrappers import KerasClassifier
-
+import joblib
+from pathlib import Path
+import os
 tf.random.set_seed(42)
+np.random.seed(42)
 
 ANN_PARAMS = {
     "model__n_hidden": [0, 1, 2, 3],
@@ -53,17 +56,15 @@ def rnf_model(
 
     Returns
     ----------
-        model: A RandomForestClassifier with predefined hyperparameters
+        A RandomForestClassifier with predefined hyperparameters
     """
-    model = RandomForestClassifier(
+    return RandomForestClassifier(
         n_estimators=n_estimators,
         min_samples_split=min_samples_split,
         min_samples_leaf=min_samples_leaf,
         max_depth=max_depth,
         random_state=42,
     )
-
-    return model
 
 
 # Hyperparameter Tuning for ANN
@@ -187,7 +188,9 @@ def lstm_builder(num_features, past_days=100):
 
 def rnd_best_params(data, model_type, param_dist):
     """
-    Performs randomized search with cross validation to find the best hyperparameters for the specified model type
+    Performs randomized search with cross validation to find the best hyperparameters 
+    for the specified model type; returns best parameters for future reference
+    and also saves the best model as local files
 
     Parameters
     ----------
@@ -200,9 +203,14 @@ def rnd_best_params(data, model_type, param_dist):
         best_params: a dictionary containing the best hyperparameters found during the randomized search
     """
     all_data, X_train, _, y_train, _ = data
+    model_dir = Path(__file__).parent
 
     if model_type == "rnf":
-        classifier = rnf_model()
+        rnf_clf = rnf_model()
+        rnf_model_path = model_dir / "best_rnf_model.joblib"
+        rnd_search_cv = RandomizedSearchCV(rnf_clf, param_dist, n_iter=10, cv=3, random_state=42)
+        rnd_clf = rnd_search_cv.fit(X_train, y_train).best_estimator_
+        joblib.dump(rnf_clf, rnf_model_path)
 
     if model_type == "ann":
         X_train = data[1]
@@ -215,7 +223,7 @@ def rnd_best_params(data, model_type, param_dist):
 
     if model_type in ["ann", "lstm"]:
         checkpoint_cb = tf.keras.callbacks.ModelCheckpoint(
-            "best_" + model_type + "_model.h5", save_best_only=True
+            str(model_dir / f"best_{model_type}_model.h5"), save_best_only=True
         )
         early_stopping_cb = tf.keras.callbacks.EarlyStopping(
             patience=5, restore_best_weights=True
@@ -228,8 +236,8 @@ def rnd_best_params(data, model_type, param_dist):
             callbacks=[checkpoint_cb, early_stopping_cb],
         )
 
-    rnd_search_cv = RandomizedSearchCV(classifier, param_dist, n_iter=10, cv=3)
-    rnd_search_cv.fit(X_train, y_train)
+        rnd_search_cv = RandomizedSearchCV(classifier, param_dist, n_iter=10, cv=3, random_state=42)
+        rnd_search_cv.fit(X_train, y_train)
 
     return rnd_search_cv.best_params_
 
@@ -393,13 +401,15 @@ def valuation_metric(y_test, y_preds):
 
 
 if __name__ == "__main__":
+    os.chdir(Path(__file__).parent)
     data = test_train_prep("AAPL")
     keras.backend.clear_session()
 
-    best_params =  rnd_best_params(data, model_type="lstm", param_dist=LSTM_PARAMS)
-    best_model = keras.models.load_model("best_lstm_model.h5")
-    general_preds = predict_with_best_model(data, best_model, model_type="lstm")
+    best_params =  rnd_best_params(data, model_type="ann", param_dist=ANN_PARAMS)
+    best_model = keras.models.load_model("best_ann_model.h5")
+    # best_model = joblib.load("best_rnf_model.joblib")
+    general_preds = predict_with_best_model(data, best_model, model_type="ann")
     valuation_metric(general_preds["Actual"], general_preds["Predictions"])
 
-    backtest_preds = backtest(data, best_model, "lstm")
+    backtest_preds = backtest(data, best_model, "ann")
     valuation_metric(backtest_preds["Actual"], backtest_preds["Predictions"])
