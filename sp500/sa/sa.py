@@ -3,7 +3,7 @@ import pandas as pd
 import pathlib
 from sp500.compile.cleanup import cleanup
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
-from sp500.sa.test import label_score, overall_sentiment_socre, match_comparison
+from sp500.sa.test import label_score
 from sp500.sa.train_classifier import train_classifier
 import nltk
 from textblob import TextBlob

@@ -1,4 +1,4 @@
-from sp500.sa.sa import calculate_score, sentiment_analyzer
+from sp500.sa.sa import calculate_score
 import pathlib
 
 def implementation(labeled_data_filename):

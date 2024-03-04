@@ -209,8 +209,7 @@ def rnd_best_params(data, model_type, param_dist):
         rnf_clf = rnf_model()
         rnf_model_path = model_dir / "best_rnf_model.joblib"
         rnd_search_cv = RandomizedSearchCV(rnf_clf, param_dist, n_iter=10, cv=3, random_state=42)
-        rnd_clf = rnd_search_cv.fit(X_train, y_train).best_estimator_
-        joblib.dump(rnf_clf, rnf_model_path)
+        joblib.dump(rnd_search_cv.fit(X_train, y_train).best_estimator_, rnf_model_path)
 
     if model_type == "ann":
         X_train = data[1]
@@ -411,5 +410,5 @@ if __name__ == "__main__":
     general_preds = predict_with_best_model(data, best_model, model_type="ann")
     valuation_metric(general_preds["Actual"], general_preds["Predictions"])
 
-    #backtest_preds = backtest(data, best_model, "ann")
-    #valuation_metric(backtest_preds["Actual"], backtest_preds["Predictions"])
+    backtest_preds = backtest(data, best_model, "ann")
+    valuation_metric(backtest_preds["Actual"], backtest_preds["Predictions"])

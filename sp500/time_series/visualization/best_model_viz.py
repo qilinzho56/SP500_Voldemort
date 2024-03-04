@@ -1,5 +1,4 @@
-from sp500.time_series.price_model import rnd_best_params, predict_with_best_model, valuation_metric, backtest
-from sp500.time_series.time_series_preprocessing import test_train_prep
+from sp500.time_series.price_model import predict_with_best_model, valuation_metric
 from tensorflow import keras
 from sklearn.metrics import confusion_matrix
 import numpy as np
@@ -67,7 +66,7 @@ def model_summary_figs(data, company, models=MODELS):
     data: the five-tuple containing all_data, X_train, y_train, X_test, y_test 
     company: a string of company name
     models: a dictionary mapping model names to their trained models
-    
+
     Returns:
     ----------
     preds_summary_plots (dict): a dctionary mapping model types to their prediction summary plots
@@ -82,3 +81,6 @@ def model_summary_figs(data, company, models=MODELS):
         accuracy_tables[model_type] = valuation_metric(preds_df["Actual"],  preds_df["Predictions"])
         
     return preds_summary_plots, accuracy_tables
+
+if __name__ == "__main__":
+    best_model = MODELS["ann"].summary()

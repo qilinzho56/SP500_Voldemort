@@ -1,5 +1,5 @@
 import pandas as pd
-from wordcloud import WordCloud, STOPWORDS, get_single_color_func
+from wordcloud import WordCloud, STOPWORDS
 import matplotlib.pyplot as plt
 from pathlib import Path
 from datatypes import GroupedColorFunc
