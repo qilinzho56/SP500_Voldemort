@@ -29,11 +29,11 @@ ADDITIONAL_STOPWORDS = [
 ]
 
 company_logo_paths = {
-    "AAPL": "../visualization/apple.png",
-    "AMZN": "../visualization/amazon.png",
-    "BA": "../visualization/boeing.png",
-    "GOOG": "../visualization/google.png",
-    "NVDA": "../visualization/nvidia.png",
+    "AAPL": "visualization/apple.png",
+    "AMZN": "visualization/amazon.png",
+    "BA": "visualization/boeing.png",
+    "GOOG": "visualization/google.png",
+    "NVDA": "visualization/nvidia.png",
 }
 
 
