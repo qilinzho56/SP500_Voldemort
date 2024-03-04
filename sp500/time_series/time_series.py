@@ -132,7 +132,7 @@ def load_ticker_data(company):
     ticker_df: a dataframe with ticker's daily general price and volume information
     """
     end_date = datetime.now().strftime("%Y-%m-%d")
-    ticker_df = yf.download(company, start="2000-01-01", end=end_date, interval="1d")
+    ticker_df = yf.download(company, start="2018-01-01", end=end_date, interval="1d")
 
     return ticker_df
 
