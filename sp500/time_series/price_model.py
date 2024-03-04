@@ -371,7 +371,7 @@ def valuation_metric(y_test, y_preds):
 
     Returns
     -------
-    a 5-tuple: (accuracy, precision, original_positive_percentage, recall, f1score)
+    a statistics dataframe: including accuracy, precision, original_positive_percentage, recall, f1score
     """
     accuracy = accuracy_score(y_test, y_preds)
     precision = precision_score(y_test, y_preds)
@@ -379,12 +379,17 @@ def valuation_metric(y_test, y_preds):
     f1score = f1_score(y_test, y_preds)
     original_pos_percent = (y_test == 1).mean()
 
+    stats_df = pd.DataFrame({
+        'Metric': ['Accuracy', 'Precision', 'Original Positive Percentage', 'Recall', 'F1 Score'],
+        'Value': [accuracy, precision, original_pos_percent, recall, f1score]
+    })
+
     print(f"Accuracy = {accuracy}")
     print(f"Precision = {precision}")
     print(f"Test Positive Percentage = {original_pos_percent}")
     print(f"Recall = {recall}")
     print(f"F1 Score = {f1score}")
-    return (accuracy, precision, original_pos_percent, recall, f1score)
+    return stats_df
 
 
 if __name__ == "__main__":

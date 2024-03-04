@@ -1,4 +1,5 @@
 import plotly.graph_objects as go
+import plotly.io as pio
 from sp500.time_series.time_series import load_ticker_data, ema_macd, obv
 import pandas as pd
 from datetime import datetime, timedelta
@@ -123,5 +124,10 @@ def plot_stock_data_interactive(company):
         ],
         layout=layout,
     )
-    fig.show()
+
+    html_content = pio.to_html(fig, full_html=False)
+
+    image_bytes = pio.to_image(fig, format="png", width=1300, height=800)
+    #fig.show()
+    return image_bytes, html_content
 

@@ -4,7 +4,7 @@ import numpy as np
 import yfinance as yf
 from fredapi import Fred
 from datetime import datetime
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import train_test_split
 
 
@@ -132,7 +132,7 @@ def load_ticker_data(company):
     ticker_df: a dataframe with ticker's daily general price and volume information
     """
     end_date = datetime.now().strftime("%Y-%m-%d")
-    ticker_df = yf.download(company, start="2018-01-01", end=end_date, interval="1d")
+    ticker_df = yf.download(company, start="2000-01-01", end=end_date, interval="1d")
 
     return ticker_df
 
@@ -232,7 +232,7 @@ def test_train_prep(company):
 
     Returns
     -------
-   all_data, X_train, X_test, y_train, y_test:  a 5-tuple containing a full preprocessed dataframe 
+   all_data, X_train, X_test, y_train, y_test:  a 5-tuple containing a scaled and preprocessed dataframe 
    and the training/testing numpy arrays
     """
     ticker_df = load_ticker_data(company)
@@ -244,6 +244,9 @@ def test_train_prep(company):
     combined_df["Target"] = (combined_df["Tomorrow"] > combined_df["Adj Close"]).astype(
         int
     )
+    
+    # Imputed misising values with a rolling average in a window size of 5
+    combined_df = combined_df.fillna(combined_df.rolling(window=5, min_periods=1).mean())
     combined_df.replace("NA", pd.NA, inplace=True)
     combined_df = combined_df.dropna()
 
@@ -254,7 +257,7 @@ def test_train_prep(company):
             ["Target", "Close Adj Close", "Adj Close", "Tomorrow", "Volume"]
         )
     ]
-    scaler = StandardScaler()
+    scaler = MinMaxScaler()
     X_scaled = scaler.fit_transform(X)
     X_scaled_df = pd.DataFrame(X_scaled, index=X.index, columns=X.columns)
 

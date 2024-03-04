@@ -47,5 +47,6 @@ def plot_macro_indicators(macro_indicators):
     plt.close()
 
 if __name__ == "__main__":
-    macro_indicators = preprocess_macro_data(fetch_macro_indicators())
+    macro_indicators = fetch_macro_indicators()
+    preprocess_macro_data(macro_indicators)
     plot_macro_indicators(macro_indicators)
