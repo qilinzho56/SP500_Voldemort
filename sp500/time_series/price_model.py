@@ -411,5 +411,5 @@ if __name__ == "__main__":
     general_preds = predict_with_best_model(data, best_model, model_type="ann")
     valuation_metric(general_preds["Actual"], general_preds["Predictions"])
 
-    backtest_preds = backtest(data, best_model, "ann")
-    valuation_metric(backtest_preds["Actual"], backtest_preds["Predictions"])
+    #backtest_preds = backtest(data, best_model, "ann")
+    #valuation_metric(backtest_preds["Actual"], backtest_preds["Predictions"])

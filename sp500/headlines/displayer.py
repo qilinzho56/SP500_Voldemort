@@ -7,30 +7,15 @@ import numpy as np
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from sp500.time_series.visualization.company_profile import company_index_exhibit
 from sp500.time_series.visualization.stock_movement import plot_stock_data_interactive
+from sp500.time_series.visualization.best_model_viz import model_summary_figs, MODELS
+from sp500.time_series.time_series_preprocessing import test_train_prep
 import webbrowser
-import os
 from pathlib import Path
 from tensorflow import keras
 import joblib
 
 FONT = {"Arial Bold", 16}
 sg.set_options(font=FONT)
-
-DIR = Path(__file__).parents[1] / "time_series"
-ANN = keras.models.load_model(DIR / "best_ann_model.h5")
-LSTM = keras.models.load_model(DIR / "best_lstm_model.h5")
-RNF = joblib.load(DIR /"best_rnf_model.joblib")
-# Define a function to draw the matplotlib figure object on the canvas
-def draw_figure(canvas, figure):
-    tkcanvas = FigureCanvasTkAgg(figure, canvas)
-    tkcanvas.draw()
-    tkcanvas.get_tk_widget().pack(side='top', fill='both', expand=1)
-
-    return tkcanvas
-
-def save_plotly_figure_as_html(fig, file_path='dynamic_stock_plot.html'):
-    fig.write_html(file_path)
-    return file_path
 
 def create_row_layout(df, title):
     headings = df.columns.tolist()
@@ -41,7 +26,29 @@ def create_row_layout(df, title):
         layout.append([sg.Text(f"{head}:"), sg.InputText(value, disabled=True)])
 
     return layout
-    
+
+def add_plots_and_tables_to_layout(plots, tables, base_dir):
+    layout = []
+
+    for model_type, (fig1, fig2) in plots.items():
+        fig1_path = base_dir / f"{model_type}_prediction_plot.png"
+        fig2_path = base_dir / f"{model_type}_probability_plot.png"
+
+        fig1.savefig(fig1_path)
+        fig2.savefig(fig2_path)
+
+        layout.append([sg.Text(f"{model_type} Prediction Vs Actual")])
+        layout.append([sg.Image(filename=str(fig1_path))])
+        
+        layout.append([sg.Text(f"{model_type} Probability Distributions")])
+        layout.append([sg.Image(filename=str(fig2_path))])
+
+        table = tables[model_type]
+        layout.append([sg.Text(f"{model_type} Summary of Metrics")])
+        layout.append([sg.Table(values=table.values.tolist(), headings=table.columns.tolist())])
+
+    return layout
+
 
 
 class TickerApplication:
@@ -53,12 +60,15 @@ class TickerApplication:
         window1: user input tickers 
         window2: news and URLs exhibit
         window3: company profile and stock movement plots
+        window4: model evaluation and time-series analysis
         """
         self.tickers = []
         self.news_data = None
         self.window1()
         self.window2 = None
         self.window3 = None
+        self.window4 = None
+        self.company_data = {}
 
     def window1(self):
         self.lst = sg.Listbox(
@@ -218,21 +228,39 @@ class TickerApplication:
 
                 if event.startswith("TIME_SERIES_ANALYSIS-"):
                     company = event.split("TIME_SERIES_ANALYSIS-")[1]
-                    self.open_window4(company)
+                    self.company_data[company] = test_train_prep(company)
+                    self.update_window4(company)
+                    self.run_window4()
 
         self.window3.close()
+ 
 
+    def update_window4(self, company):
+        layout = [[sg.Text(f"Time-series analysis and prediction for {company}")],
+        [sg.Button("Click for sentiment analysis", key=f"SENTIMENT_ANALYSIS-{company}")]]
+        self.window4 = sg.Window(f"Analysis for {company}", layout, modal=True)
+        
+        data = self.company_data[company]
+        preds_summary_plots, accuracy_tables = model_summary_figs(data, company, MODELS)
+        base_dir = Path(__file__).parents[1] / "time_series" / "visualization"
+        base_dir.mkdir(parents=True, exist_ok=True)
 
-    def open_window4(self, company):
-        # Example content for Window 4, customize this with actual analysis/prediction content
-        layout = [
-            [sg.Text(f"Time-series analysis and prediction for {company}")],
-            [sg.Button("Close", key="CLOSE_WINDOW4")]
-        ]
-        window4 = sg.Window(f"Analysis for {company}", layout, modal=True)
+        fig_table_layout = add_plots_and_tables_to_layout(preds_summary_plots, accuracy_tables, base_dir)
+        scrollable_column = sg.Column(fig_table_layout, scrollable=True, vertical_scroll_only=True, size=(800, 600))
 
+        top_layout = [
+        [sg.Text(f"Time-series analysis and prediction for {company}")],
+    ]
+        final_layout = top_layout + [[scrollable_column]] + [[sg.Button("Click for sentiment analysis", key=f"SENTIMENT_ANALYSIS-{company}")]]
+    
+        self.window4 = sg.Window(f"Price-only Model Prediction Analysis for {company}", final_layout, (4000, 4000),  resizable=True )
+
+    def run_window4(self):
         while True:
-            event, values = window4.read()
-            if event == sg.WIN_CLOSED or event == "CLOSE_WINDOW4":
+            event, values = self.window4.read()
+            if event == sg.WIN_CLOSED:
                 break
-        window4.close()
+
+            if event.startswith("SENTIMENT_ANALYSIS-"):
+                break
+

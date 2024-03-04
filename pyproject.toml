@@ -28,6 +28,7 @@ tensorflow = "2.15"
 plotly = "^5.19.0"
 kaleido = "0.2.1"
 joblib = "^1.3.2"
+seaborn = "^0.13.2"
 
 [tool.poetry.group.dev.dependencies]
 black = "^22.12.0"
