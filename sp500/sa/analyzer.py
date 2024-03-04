@@ -10,6 +10,6 @@ def implementation(labeled_data_filename):
 
 if __name__ == "__main__":
     labeled_data_filename = (
-        pathlib.Path(__file__).parent / "data/Jan_24_Jan_28_Stock_News.csv"
+        pathlib.Path(__file__).parent / "data/New_data.csv.csv"
     )
     implementation(labeled_data_filename)

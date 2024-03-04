@@ -57,5 +57,8 @@ def headlines(headers, company_list, max_days):
                 data.append([cur_date, cur_time, company, headline, url[0]])
             else:
                 print("Private News")
+        
+        df = pd.DataFrame(data, columns=["Date", "Time", "Company", "Headline", "URL"])
+        df.to_csv("./sp500/sa/data/New_data.csv", index=False)
 
-    return pd.DataFrame(data, columns=["Date", "Time", "Company", "Headline", "URL"])
+    return df
