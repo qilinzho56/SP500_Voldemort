@@ -17,14 +17,23 @@ STOCK_TO_COMPANY = {
     "STOCK": "Stock",
 }
 
-ADDITIONAL_STOPWORDS = ["stock", "stocks", "market", "markets", "Stock", "Stocks"]
+ADDITIONAL_STOPWORDS = [
+    "stock",
+    "stocks",
+    "market",
+    "markets",
+    "Stock",
+    "Stocks",
+    "Alphabet",
+    "Microsoft",
+]
 
 company_logo_paths = {
-    "AAPL": "../visualization/apple.png",
-    "AMZN": "../visualization/amazon.png",
-    "BA": "../visualization/boeing.png",
-    "GOOG": "../visualization/google.png",
-    "NVDA": "../visualization/nvidia.png",
+    "AAPL": "visualization/apple.png",
+    "AMZN": "visualization/amazon.png",
+    "BA": "visualization/boeing.png",
+    "GOOG": "visualization/google.png",
+    "NVDA": "visualization/nvidia.png",
 }
 
 
