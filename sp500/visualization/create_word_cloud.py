@@ -28,12 +28,14 @@ ADDITIONAL_STOPWORDS = [
     "Microsoft",
 ]
 
+picture_path = os.path.dirname(os.path.abspath(__file__))
+
 company_logo_paths = {
-    "AAPL": "visualization/apple.png",
-    "AMZN": "visualization/amazon.png",
-    "BA": "visualization/boeing.png",
-    "GOOG": "visualization/google.png",
-    "NVDA": "visualization/nvidia.png",
+    "AAPL": os.path.join(picture_path, "visualization", "apple.png"),
+    "AMZN": os.path.join(picture_path, "visualization", "amazon.png"),
+    "BA": os.path.join(picture_path, "visualization", "boeing.png"),
+    "GOOG": os.path.join(picture_path, "visualization", "google.png"),
+    "NVDA": os.path.join(picture_path, "visualization", "nvidia.png"),
 }
 
 
