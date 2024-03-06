@@ -112,7 +112,7 @@ def create_label(row, classifier):
     return classifier.get(combination)
 
 
-def sentiment_analyzer(labeled_data_filename):
+def sentiment_analyzer(df):
     """
     Function to conduct sentiment analysis using NLTK package.
 
@@ -120,61 +120,77 @@ def sentiment_analyzer(labeled_data_filename):
     Calculates sentiment scores for each headline, predicts sentiment labels.
 
     Inputs:
-        None
+        labeled_data (Dataframe)
 
     Returns:
         labeled_data (DataFrame)
     """
 
-    labeled_data = pd.read_csv(labeled_data_filename, encoding="unicode_escape")
-
     # Clean up labeled data (convert to lowercase, skip stop words)
-    labeled_data = cleanup(labeled_data)
-    fine_tune_SA()
+    df = cleanup(df)
 
     # Iterate through each cleaned headline and calcualte the polarity score
     # neg, neu, pos represent the proportion of negative, neutral, and positive emotions in the sentence
     # compound represents the polarity score
     
-    for index, row in labeled_data.iterrows():
+    for index, row in df.iterrows():
         score_dict = analyzer.polarity_scores(row["Cleaned Headline"])
-        labeled_data.at[index, "neg"] = score_dict["neg"]
-        labeled_data.at[index, "neu"] = score_dict["neu"]
-        labeled_data.at[index, "pos"] = score_dict["pos"]
-        labeled_data.at[index, "compound"] = score_dict["compound"]
+        df.at[index, "neg"] = score_dict["neg"]
+        df.at[index, "neu"] = score_dict["neu"]
+        df.at[index, "pos"] = score_dict["pos"]
+        df.at[index, "compound"] = score_dict["compound"]
         blob = TextBlob(row["Cleaned Headline"])
-        labeled_data.at[index, "textblob polarity"] = blob.sentiment_assessments.polarity
+        df.at[index, "textblob polarity"] = blob.sentiment_assessments.polarity
 
     # Convert the score intot different groups
-    labeled_data["Segmentation Compound"] = labeled_data["compound"].apply(score_grouping)
-    labeled_data["Segmentation Textblob"] = labeled_data["textblob polarity"].apply(score_grouping)
+    df["Segmentation Compound"] = df["compound"].apply(score_grouping)
+    df["Segmentation Textblob"] = df["textblob polarity"].apply(score_grouping)
+
+    return df
+
+def create_classifier():
+
+    labeled_data_filename = (
+        pathlib.Path(__file__).parent / "data/Jan_24_Jan_28_Stock_News.csv"
+    )
+
+    labeled_data = pd.read_csv(labeled_data_filename, encoding="unicode_escape")
+    fine_tune_SA()
+    labeled_data = sentiment_analyzer(labeled_data)
 
     # Train the classifier based on manually labeled dataset
     classifier = train_classifier(labeled_data)
-    labeled_data["Predicted PNU"] = labeled_data.apply(create_label, axis = 1, args = (classifier, ))
 
-    return labeled_data
+    return classifier
 
-def calculate_score(labeled_data_filename):
+
+def calculate_score(df):
     """
     Evaluate the average sentiment score for each company and provide corresponding views.
 
     This function performs sentiment analysis on labeled data for different companies. 
     It converts the predicted PNU label into corresponding sentiment scores and calculates 
     the average sentiment score for each company.
+    
+    Inputs:
+        df (DataFrame): DataFrame includes the financial news headline we scrapped from 
+            finviz.com
 
     Returns:
         None
     """
 
-    labeled_data = sentiment_analyzer(labeled_data_filename)
+    classifier = create_classifier()
+    df = sentiment_analyzer(df)
+
+    df["Predicted PNU"] = df.apply(create_label, axis = 1, args = (classifier, ))
 
     # Convert the PNU label to corresponding score
-    labeled_data["Predicted PNU score"] = labeled_data["Predicted PNU"].apply(
+    df["Predicted PNU score"] = df["Predicted PNU"].apply(
         label_score
     )
     
-    average_predicted_scores = labeled_data.groupby("Company")[
+    average_predicted_scores = df.groupby("Company")[
         "Predicted PNU score"
     ].mean()
 
@@ -192,4 +208,4 @@ def calculate_score(labeled_data_filename):
     # labeled_data_test = match_comparison(labeled_data)
     # overall_sentiment_socre(labeled_data_test)
 
-    return labeled_data
+    return df
