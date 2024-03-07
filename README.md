@@ -37,7 +37,7 @@ Explores the relationship between expected returns and systematic risk, for each
 - **Time-Series Data**: Analyzed to capture price patterns and trends from 2000 to now, on a daily frequency to the train three time-series ML models, with 4 years as a cycle for backtesting **(Random Forests, ANN, LSTM)**⏳.
 
 ## Time Series Prediction Results Overview (Binary Classification Problem)
-** Tomorrow's stock movement prediction  Up or Down?**
+**Tomorrow's stock movement prediction  Up or Down?**
 ### Training Period Performance for AAPL (2000-01-01 to 2024-03-03)
 | Model | Accuracy | Precision | Test Positive Percentage | Recall | F1 Score |
 |-------|----------|-----------|--------------------------|--------|----------|
@@ -53,6 +53,7 @@ Explores the relationship between expected returns and systematic risk, for each
 | LSTM  | 0.5385   | 0.5385    | 0.5385                   | 1.0000 | 0.7000   |
 | ANN   | 0.5279   | 0.5280    | 0.5279                   | 0.9989 | 0.6908   |
 
+From the results on AAPL stock above, we have **slightly better prediction than baseline distribution** (i.e., comparing precision with test positive percentage). In the training, LSTM and ANN generally had a relatively high recall with lower precision. On the other hand, Random Forests have better precision with low recall. We suggest users to change the threshold and train deeper networks for better results.
 ## ❓ Target
 - **Empower retail investors by integrating Artificial Intelligence (AI) tools**, including traditional Artificial Neural Networks (ANN) and Recurrent Neural Networks (RNN), to bridge the cognitive or knowledge gap in financial markets. These technologies aim to augment investors' decision-making processes with advanced, data-driven insights.
 - Enhance the Efficient Market Hypothesis perspective by incorporating sentiment analysis of news headlines. This approach tests the impact of public sentiment on company valuations, suggesting that markets might not instantly reflect all available information, particularly in the short term. Through sentiment analysis, we can identify **potential lagged effects of public opinion on stock prices**.
