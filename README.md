@@ -17,6 +17,12 @@ A thorough investigation of existing research on stock movement prediction metho
 
 ## 🔎 Package Exploration
 Examination of various Python libraries 🐍 for data analysis and machine learning.
+1. Data Science and Analysis: pandas, numpy, matplotlib, seaborn, plotly, kaleido
+2. Machine Learning and Data Processing: scikit-learn, tensorflow, scikeras, joblib
+3. Natural Language Processing: textblob, en_core_web_sm
+4. Financial Data Analysis: yfinance, fredapi
+5. Web Scraping: requests
+6. Visualization and User Interface: PySimpleGUI, wordcloud 
 
 ## 🗂️ Data Collection, Analysis, and Evaluation
 Details the data sources and analytical methods used in the project.
