@@ -65,10 +65,14 @@ From the results on AAPL stock above, we have **slightly better prediction than 
 
 By utilizing news headlines marked as **Negative High and Positive Low** through sentiment analysis (respectively labeled as positive and negative in wordcloud), it is possible to more accurately reflect the media's perspective on a stock while also enhancing the precision of word cloud coloring.
 
-<p align="left">
-  <img src="AAPL_prev.jpg" alt="WC Prev" height="300"/> 
-  <img src="sp500/visualization/visualization/AAPL_wordcloud.png" alt="WC After" height="300"/>
-</p>
+<figure style="display: inline-block">
+  <img src="AAPL_prev.jpg" alt="WC Prev" height="200"/>
+  <figcaption>WordCloud Before Tuning</figcaption>
+</figure>
+<figure style="display: inline-block">
+  <img src="sp500/visualization/visualization/AAPL_wordcloud.png" alt="WC After" height="400"/>
+  <figcaption>WordCloud After Tuning</figcaption>
+</figure>
 
 ## 🌟 Future Improvement
 - **GUI design**: we currently utilize **the best three machine learning models pre-trained on Apple Stock** data streamlines the user experience by eliminating the need for daily model retraining. Future improvement may be thread implementation and training speed optimization.
