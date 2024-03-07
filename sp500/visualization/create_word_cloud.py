@@ -351,6 +351,9 @@ def create_wordcloud_for_company(df, company_name, company_logo_path=None, visua
             will be shaped like the company's logo.
         visualization_dir (str): Path to the directory where the word cloud image will be saved.
             If the directory does not exist, it will be created. Defaults to "visualization".
+    
+    Returns:
+        figpath (str): path to wordcloud figure 
     """
     if not os.path.exists(visualization_dir):
         os.makedirs(visualization_dir)
@@ -386,6 +389,5 @@ def create_wordcloud_for_company(df, company_name, company_logo_path=None, visua
     # Save the word cloud to a file
     filepath = os.path.join(visualization_dir, f"{company_name}_wordcloud.png")
     wordcloud.to_file(filepath)
-    plt.close()
 
     return filepath
