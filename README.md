@@ -75,6 +75,14 @@ pyproject.toml
 README.md
 
 ```
+<<<<<<< HEAD
+### 1.2 Instruction
+1. 
+2. Run 
+```shell
+poetry run python sp500/headlines/app.py
+3.```
+=======
 
 
 ### 1.2 User Instruction
@@ -84,6 +92,7 @@ README.md
 4. Activate virtual environment by running ```poetry shell``` in terminal
 5. Run the command line ```poetry run python sp500/headlines/app.py``` in terminal to interact with our application
     If you are using a Mac with an M1, you may encounter tensorflow installation problems (zsh: illegal hardware instruction). Please refer to https://stackoverflow.com/questions/65383338/zsh-illegal-hardware-instruction-python-when-installing-tensorflow-on-macbook 
+>>>>>>> 7ea883151d4a007deda4336e38c760ff7f046bb4
 
 
 ## Reference

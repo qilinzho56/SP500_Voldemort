@@ -1,11 +1,11 @@
 from sp500.time_series.price_model import predict_with_best_model, valuation_metric
-from tensorflow import keras
 from sklearn.metrics import confusion_matrix
 import numpy as np
 import joblib
 from pathlib import Path
 import seaborn as sns
 import matplotlib.pyplot as plt
+from tensorflow import keras
 
 DIR = Path(__file__).parents[1]
 ANN = keras.models.load_model(DIR / "best_ann_model.h5")

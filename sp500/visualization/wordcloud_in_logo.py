@@ -17,8 +17,8 @@ COMPANY_LOGO_PATHS = {
 
 def run_word_cloud():
     filename = Path(__file__).parent.parent / "sa/data/Finished_test_sa.csv"
-    visualization_dir = Path(__file__).resolve().parent / "visualization"
     df = pd.read_csv(filename)
+    visualization_dir = Path(__file__).resolve().parent / "visualization"
     stock_to_company = map_stock_names_to_company_names(df, "Company")
     create_wordcloud(
         df=df,
