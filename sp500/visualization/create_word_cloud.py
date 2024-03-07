@@ -1,21 +1,10 @@
-import pandas as pd
 from wordcloud import WordCloud, STOPWORDS
 import matplotlib.pyplot as plt
-from pathlib import Path
 from datatypes import GroupedColorFunc
 import os
 import re
 import numpy as np
 from PIL import Image
-
-STOCK_TO_COMPANY = {
-    "AAPL": "Apple",
-    "NVDA": "Nvidia",
-    "BA": "Boeing",
-    "GOOG": "Google",
-    "AMZN": "Amazon",
-    "STOCK": "Stock",
-}
 
 ADDITIONAL_STOPWORDS = [
     "stock",
@@ -28,50 +17,38 @@ ADDITIONAL_STOPWORDS = [
     "Microsoft",
 ]
 
-picture_path = os.path.dirname(os.path.abspath(__file__))
 
-company_logo_paths = {
-    "AAPL": os.path.join(picture_path, "visualization", "apple.png"),
-    "AMZN": os.path.join(picture_path, "visualization", "amazon.png"),
-    "BA": os.path.join(picture_path, "visualization", "boeing.png"),
-    "GOOG": os.path.join(picture_path, "visualization", "google.png"),
-    "NVDA": os.path.join(picture_path, "visualization", "nvidia.png"),
-}
-
-
-def read_headlines():
+def read_headlines(df):
     """
-    This function reads headlines from a cleaned CSV file and stores them in a dictionary with the stock name as the key.
-    Each key maps to another dictionary that categorizes headlines into 'positive', 'negative', and 'neutral' based on their polarity.
+    This function processes a DataFrame of headlines and stores them in a dictionary with the stock name as the key.
+    Each key maps to another dictionary that categorizes headlines into 'positive', 'negative', and 'uncertain'
+    based on scores and labels.
+
+    Parameters:
+        df (pandas.DataFrame): A DataFrame containing the headlines and associated sentiment scores and labels.
 
     Returns:
-        dict: A dictionary with company names as keys. Each key maps to another dictionary with keys 'positive', 'negative', and 'neutral',
+        dict: A dictionary with company names as keys. Each key maps to another dictionary with keys 'positive', 'negative', and 'uncertain',
         each of which is a list of headlines corresponding to the sentiment category.
     """
 
-    # Use pathlib to construct the path to the CSV file relative to the current file's directory
-    filename = Path(__file__).parent.parent / "sa/data/Finished_test_sa.csv"
-
-    # Read the CSV file into a pandas DataFrame
-    df = pd.read_csv(filename)
-
-    # Classifier function to categorize sentiment based on pos, neg scores and Label
+    # Classifier function to categorize sentiment based on pos, neg scores, and Label
     def classifier_sentiment(row):
-        if row["pos"] > row["neg"] and row["Label (P, N, U-neutral)"] == "P":
+        if row["pos"] > row["neg"] and row["Segmentation Compound"] == "Positive High":
             return "positive"
-        elif row["pos"] < row["neg"] and row["Label (P, N, U-neutral)"] == "N":
+        elif row["pos"] < row["neg"] and row["Segmentation Compound"] == "Negative High":
             return "negative"
         else:
             return "uncertain"
 
     # Apply the classifier function to each row to create a new 'sentiment' column
     df["sentiment"] = df.apply(classifier_sentiment, axis=1)
+
     # Initialize a dictionary to store the categorized headlines for each company
     company_headlines_sentiment = {}
 
     # Group the DataFrame by company and iterate through each group
     for company, group in df.groupby("Company"):
-        # Filter the group for positive, negative, and neutral headlines and convert to lists
         positive_headlines = group[group["sentiment"] == "positive"][
             "Headline"
         ].tolist()
@@ -88,7 +65,7 @@ def read_headlines():
             "negative": negative_headlines,
             "uncertain": uncertain_headlines,
         }
-    # Return the dictionary containing the categorized headlines for each company
+
     return company_headlines_sentiment
 
 
@@ -97,7 +74,7 @@ def add_stopwords_with_regex(texts, stopwords):
     Adds a list of texts to the stopwords set, using regex to catch variations.
 
     Parameters:
-    - text: A list of text that should include in stopwords
+    - texts: A list of text that should include in stopwords
     - stopwords: A set of words that should be added to the stopword list.
 
     Returns:
@@ -190,9 +167,36 @@ def map_sentiments_to_colors(sentiment_to_keywords, sentiment_color_mapping):
     return color_to_keywords
 
 
-def create_wordcloud():
+def create_default_mask():
+    """
+    Creates a default mask for WordCloud in case a company logo is not available.
+
+    Returns:
+        numpy.ndarray: A default mask array.
+    """
+    # Create a simple circle as a default mask
+    # You can modify this to be any shape you prefer
+    mask_size = (300, 300)
+    mask = np.zeros(mask_size, dtype=np.uint8)
+    center_x, center_y = np.array(mask_size) // 2
+    radius = min(mask_size) // 2 - 10  # radius of the circle
+
+    for x in range(mask_size[0]):
+        for y in range(mask_size[1]):
+            if (x - center_x) ** 2 + (y - center_y) ** 2 <= radius**2:
+                mask[x, y] = 255
+
+    return mask
+
+
+def create_wordcloud(
+    df,
+    company_logo_paths=None,
+    stock_to_company=None,
+    visualization_dir="visualization",
+):
     # Read headlines and perform sentiment analysis, returning a dictionary of {company: {sentiment: [headlines]}}
-    headlines_dict = read_headlines()
+    headlines_dict = read_headlines(df)
 
     # Define the mapping from sentiments to color codes
     sentiment_color_mapping = {
@@ -201,21 +205,31 @@ def create_wordcloud():
         "neutral": "#808080",  # Gray for neutral sentiment
     }
 
-    # Define the path to the visualization directory
-    visualization_dir = os.path.join(os.path.dirname(__file__), "visualization")
-
     # Ensure the visualization directory exists
     if not os.path.exists(visualization_dir):
         os.makedirs(visualization_dir)
 
-    # Assume add_companies_to_stopwords_with_regex is implemented elsewhere and companies are extracted
-    companies = [name for pair in STOCK_TO_COMPANY.items() for name in pair]
-    custom_stopwords = add_stopwords_with_regex(companies, set(STOPWORDS))
-    updated_stopwords = add_stopwords_with_regex(
-        ADDITIONAL_STOPWORDS, set(custom_stopwords)
-    )
+    # Initialize stopwords
+    custom_stopwords = set(STOPWORDS)
+
+    # Add company names and stock symbols to stopwords if provided
+    if stock_to_company:
+        for stock, company in stock_to_company.items():
+            custom_stopwords.add(company)
+            custom_stopwords.add(stock)
+
+    # Add additional custom stopwords
+    updated_stopwords = add_stopwords_with_regex(ADDITIONAL_STOPWORDS, custom_stopwords)
 
     for company, sentiments in headlines_dict.items():
+        if company_logo_paths and company in company_logo_paths:
+            mask_path = company_logo_paths[company]
+            mask = np.array(Image.open(mask_path))
+        else:
+            mask = create_default_mask()
+
+        inverted_mask = np.invert(mask)
+
         # Create a sentiment to keywords mapping for the current company
         sentiment_to_keywords = create_sentiment_to_keywords_dict(
             {company: sentiments}, updated_stopwords
@@ -241,15 +255,12 @@ def create_wordcloud():
         )
 
         # Retrieve the path to the company's logo, create a mask from it and invert the mask colors for the word cloud
-        mask_path = company_logo_paths[company]
-        mask = np.array(Image.open(mask_path))
-        inverted_logo_mask = np.invert(mask)
 
         # Create a WordCloud instance
         wordcloud = WordCloud(
             background_color="white",
             stopwords=updated_stopwords,
-            mask=inverted_logo_mask,
+            mask=inverted_mask,
             max_words=200,
             max_font_size=120,
             scale=2,
@@ -270,7 +281,3 @@ def create_wordcloud():
         filepath = os.path.join(visualization_dir, f"{company}_wordcloud.png")
         plt.savefig(filepath)
         plt.close()
-
-
-if __name__ == "__main__":
-    create_wordcloud()
