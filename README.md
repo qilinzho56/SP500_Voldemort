@@ -72,7 +72,7 @@ From the results on AAPL stock above, we have **slightly better prediction than 
 
 **Word Cloud After**
 
-<img src="sp500/visualization/visualization/AAPL_wordcloud.png" alt="WC After" height="600" width="500"/>
+<img src="sp500/visualization/visualization/AAPL_wordcloud.png" alt="WC After" height="600" width="650"/>
 
 ## 🌟 Future Improvement
 - **GUI design**: we currently utilize **the best three machine learning models pre-trained on Apple Stock** data streamlines the user experience by eliminating the need for daily model retraining. Future improvement may be thread implementation and training speed optimization.
