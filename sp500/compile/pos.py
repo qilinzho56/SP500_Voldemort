@@ -1,9 +1,7 @@
-#from sp500.headlines.scraper import headlines
 import pandas as pd
 import spacy
 
 nlp = spacy.load("en_core_web_sm")
-
 
 def add_new_column(dict, df, row_index):
     """
@@ -51,15 +49,11 @@ def POS_tagging(text, df, row_index):
     add_new_column(part_of_speech_dict, df, row_index)
 
 
-def POS_in_DF(headers = None, company_list = None, max_days = None):
-
-    
-    # df = headlines(headers, company_list, max_days)
-    df = pd.read_csv("./sp500/compile/test_pos.csv")
+def POS_in_DF(df):
+    """
+    Conduct Part of Speech code for DataFrame
+    """  
     for index, row in df.iterrows():
         POS_tagging(row["Headline"], df, index)
     
-    df.to_csv("./sp500/compile/Finished_test_pos.csv", index=False)
-    
-if __name__ == "__main__":
-    POS_in_DF()
+    return df
