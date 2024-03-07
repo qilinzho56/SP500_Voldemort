@@ -128,6 +128,5 @@ def plot_stock_data_interactive(company):
     html_content = pio.to_html(fig, full_html=False)
 
     image_bytes = pio.to_image(fig, format="png", width=1300, height=800)
-    #fig.show()
+    # fig.show()
     return image_bytes, html_content
-

@@ -23,6 +23,7 @@ COLUMNS = {
     "pegRatio": "Peg Ratio",
 }
 
+
 def profile_check(company):
     """
     Creata a dataframe to record company profile
@@ -38,7 +39,9 @@ def profile_check(company):
     ticker = yf.Ticker(company)
     company_profile = pd.Series(ticker.info, index=None)
     company_profile_df = pd.DataFrame(company_profile).transpose()
-    company_profile_df = company_profile_df.rename(columns=COLUMNS, index={0:datetime.now().strftime('%Y-%m-%d')})
+    company_profile_df = company_profile_df.rename(
+        columns=COLUMNS, index={0: datetime.now().strftime("%Y-%m-%d")}
+    )
     company_profile_df = company_profile_df[list(COLUMNS.values())]
 
     return company_profile_df
@@ -54,15 +57,18 @@ def company_index_exhibit(company):
 
     Returns
     -------
-    overview, finance_overview, cash_flow, profit_efficiency, PE: 
+    overview, finance_overview, cash_flow, profit_efficiency, PE:
     four dataframes with finanical info from four perspectives
     """
     company_profile_df = profile_check(company)
     overview = company_profile_df[["Ticker", "Industry", "Sector", "Market Cap"]]
-    finance_overview = company_profile_df[["Revenue Growth", "Net Income", "EBITDA Margins"]]
+    finance_overview = company_profile_df[
+        ["Revenue Growth", "Net Income", "EBITDA Margins"]
+    ]
     cash_flow = company_profile_df[["Operating Cash Flow", "Free Cash Flow"]]
-    profit_efficiency = company_profile_df[["Return on Equity", "Gross Margins", "Operating Margins"]]
+    profit_efficiency = company_profile_df[
+        ["Return on Equity", "Gross Margins", "Operating Margins"]
+    ]
     PE = company_profile_df[["Trailing PE", "Forward PE", "Peg Ratio"]]
 
     return overview, finance_overview, cash_flow, profit_efficiency, PE
-

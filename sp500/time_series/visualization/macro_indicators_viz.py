@@ -1,7 +1,11 @@
-from sp500.time_series.time_series_preprocessing import preprocess_macro_data, fetch_macro_indicators
+from sp500.time_series.time_series_preprocessing import (
+    preprocess_macro_data,
+    fetch_macro_indicators,
+)
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
+
 
 def plot_macro_indicators(macro_indicators):
     plt.figure(figsize=(14, 7))
@@ -22,7 +26,8 @@ def plot_macro_indicators(macro_indicators):
                 marker="",
                 linestyle="-",
                 linewidth=1.0,
-                color='red')
+                color="red",
+            )
             lines += line
 
         else:
@@ -45,6 +50,7 @@ def plot_macro_indicators(macro_indicators):
     filename = "Macro Indicators.png"
     plt.savefig(filename)
     plt.close()
+
 
 if __name__ == "__main__":
     macro_indicators = fetch_macro_indicators()
