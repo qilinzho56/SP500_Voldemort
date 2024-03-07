@@ -146,7 +146,6 @@ poetry install
 poetry run python sp500/headlines/app.py
 ```
 
-
 ### 1.2 Specific User Instruction
 1. Clone repository ```git clone git@github.com:qilinzho56/SP500.git``` in terminal
 2. Run ```pip install --user -U nltk``` in terminal
@@ -155,6 +154,8 @@ poetry run python sp500/headlines/app.py
 5. Run the command line ```poetry run python sp500/headlines/app.py``` in terminal to interact with our application
     If you are using a Mac with an M1, you may encounter tensorflow installation problems (zsh: illegal hardware instruction). Please refer to https://stackoverflow.com/questions/65383338/zsh-illegal-hardware-instruction-python-when-installing-tensorflow-on-macbook 
 
+### Project Paper
+We have a more detailed documentation on using our GUI and more comprehensive result sharing. Check out at [Link to Project Paper](https://github.com/qilinzho56/SP500/blob/main/Project%20Paper.pdf)
 
 ## Reference
 - D. Shah, H. Isah and F. Zulkernine, "Predicting the Effects of News Sentiments on the Stock Market," 2018 IEEE International Conference on Big Data (Big Data), Seattle, WA, USA, 2018, pp. 4705-4708.
