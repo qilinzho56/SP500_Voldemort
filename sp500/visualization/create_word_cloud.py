@@ -1,6 +1,6 @@
 from wordcloud import WordCloud, STOPWORDS
 import matplotlib.pyplot as plt
-from datatypes import GroupedColorFunc
+from sp500.visualization.datatypes import GroupedColorFunc
 import os
 import re
 import numpy as np
@@ -77,18 +77,27 @@ def add_stopwords_with_regex(texts, stopwords):
     Adds a list of texts to the stopwords set, using regex to catch variations.
 
     Parameters:
-    - texts: A list of text that should include in stopwords
-    - stopwords: A set of words that should be added to the stopword list.
+        texts: A list of text that should include in stopwords
+        stopwords: A set of words that should be added to the stopword list.
 
     Returns:
-    - A set containing the updated stopwords.
+        A set containing the updated stopwords.
     """
-    # Create a regex pattern to match any word that contains the company name or stocks
-    # Add words matched by regex to stopwords set
+
+    # Using regular expression to handle with company name like 'Amazon.com' or 'Apple Inc'
     for text in texts:
-        regex = r"\b" + re.escape(text) + r"\b"
-        stopwords.update(set(filter(lambda w: re.match(regex, w, re.I), stopwords)))
-        stopwords.add(text)
+        # Split the text by spaces and punctuation, except when part of a domain name
+        words = re.split(r"\s+(?![^()]*\))|(?<!\.\w)\b", text)
+        for word in words:
+            if word and len(word) > 2 and not word.lower().endswith(".com"):
+                word = word.lower()
+                pattern = r"\b" + re.escape(word) + r"\b"
+                stopwords.add(word)
+                additional_stopwords = set(
+                    filter(lambda w: re.search(pattern, w, re.I), stopwords)
+                )
+                stopwords.update(additional_stopwords)
+
     return stopwords
 
 
@@ -114,6 +123,18 @@ def extract_keywords_from_headlines(headlines, stopwords):
 
 
 def map_stock_names_to_company_names(df, stock_column):
+    """
+    Using Yfinance built a projection from stock name to company name.
+    It is helpful to exclude company name in wordcloud
+
+    Parameters:
+        df (pandas.DataFrame): A DataFrame containing stock name
+        stock_column(str): A str represent the column of stock name in DataFrame
+
+    Returns:
+        A dict: A dict contains projection from stock name to company name
+    """
+
     # Ensure the stock_column exists in the DataFrame
     if stock_column not in df.columns:
         raise ValueError(f"Column {stock_column} does not exist in DataFrame")
@@ -124,7 +145,6 @@ def map_stock_names_to_company_names(df, stock_column):
     # Fetch company names using yfinance
     for symbol in df[stock_column]:
         ticker = yf.Ticker(symbol)
-        # Attempt to get the company name, add None if not found
         company_name = ticker.info.get("longName", None)
         company_names[symbol] = company_name
 
@@ -140,21 +160,22 @@ def create_sentiment_to_keywords_dict(company_headlines_sentiment, stopwords):
         company_headlines_sentiment (dict): A dictionary with company names as keys
         and dictionaries as values, where each inner dictionary has 'positive',
         'negative', and 'neutral' keys mapping to lists of headlines.
+        stopwords (set of str): A set of stopwords to ignore in the extraction process.
 
     Returns:
         dict: A dictionary with sentiment categories as keys ('positive', 'negative')
         and lists of keywords associated with that sentiment as values.
     """
+
     # Initialize the dictionary to hold sentiment categories and their keywords
     sentiment_to_keywords = {"positive": [], "negative": [], "uncertain": []}
 
     # Iterate through each company and its associated sentiment categories and headlines
+    # Extract keywords from headlines and Append keywords to the appropriate sentiment category
     for company, sentiments in company_headlines_sentiment.items():
         for sentiment, headlines in sentiments.items():
             if sentiment in sentiment_to_keywords:
-                # Extract keywords from headlines
                 keywords = extract_keywords_from_headlines(headlines, stopwords)
-                # Append keywords to the appropriate sentiment category
                 sentiment_to_keywords[sentiment].extend(keywords)
     return sentiment_to_keywords
 
@@ -214,6 +235,23 @@ def create_wordcloud(
     stock_to_company=None,
     visualization_dir="visualization",
 ):
+    """
+    Generates word clouds for each company, optionally shaped by the company's logo, and saves them to a specified directory.
+
+    Parameters:
+        df (pandas.DataFrame): A DataFrame containing the headlines and associated sentiment scores and labels.
+        company_logo_paths (dict, optional): A dictionary mapping company names to file paths of their logos.
+        If provided, each word cloud will be shaped like the respective company's logo.
+        The keys should match the company names used in the DataFrame or provided by the stock_to_company mapping.
+
+        stock_to_company (dict, optional): A dictionary mapping stock symbols to company names.
+        This is useful for converting stock symbols in the DataFrame to company names, particularly if the textual data
+        references the stocks by their symbols. This mapping ensures that the text is correctly attributed to companies.
+
+        visualization_dir (str): The path to the directory where the generated word cloud images will be saved.
+        If the directory does not exist, it will be created. Defaults to a directory named "visualization" within the
+        current working directory.
+    """
     # Read headlines and perform sentiment analysis, returning a dictionary of {company: {sentiment: [headlines]}}
     headlines_dict = read_headlines(df)
 
@@ -233,12 +271,11 @@ def create_wordcloud(
 
     # Add company names and stock symbols to stopwords if provided
     if stock_to_company:
-        for stock, company in stock_to_company.items():
-            custom_stopwords.add(company)
-            custom_stopwords.add(stock)
+        texts_to_add = list(stock_to_company.values()) + list(stock_to_company.keys())
+        custom_stopwords = add_stopwords_with_regex(texts_to_add, custom_stopwords)
 
     # Add additional custom stopwords
-    updated_stopwords = add_stopwords_with_regex(ADDITIONAL_STOPWORDS, custom_stopwords)
+    custom_stopwords = add_stopwords_with_regex(ADDITIONAL_STOPWORDS, custom_stopwords)
 
     # Iterate through each entry in headlines_dict
     # And check if a dictionary of company logo paths exists
@@ -253,13 +290,13 @@ def create_wordcloud(
 
         # Create a sentiment to keywords mapping for the current company
         sentiment_to_keywords = create_sentiment_to_keywords_dict(
-            {company: sentiments}, updated_stopwords
+            {company: sentiments}, custom_stopwords
         )
 
         # Extract keywords excluding stopwords for each sentiment
         for sentiment, headlines in sentiment_to_keywords.items():
             sentiment_to_keywords[sentiment] = extract_keywords_from_headlines(
-                headlines, updated_stopwords
+                headlines, custom_stopwords
             )
 
         # Map sentiments to colors
@@ -278,7 +315,7 @@ def create_wordcloud(
         # Create a WordCloud instance
         wordcloud = WordCloud(
             background_color="white",
-            stopwords=updated_stopwords,
+            stopwords=custom_stopwords,
             mask=inverted_mask,
             max_words=200,
             max_font_size=120,
