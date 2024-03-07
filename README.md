@@ -9,7 +9,10 @@ This repository hosts the code 🧑‍💻 and documentation 📄 for a machine 
 - [Package Exploration](#package-exploration)
 - [Data Collection, Analysis, and Evaluation](#data-collection-analysis-and-evaluation)
 - [Factor Analysis](#factor-analysis)
-- [Development Process](#development-process)
+- [Target](#target)
+- [Results](#Results)
+- [Future Improvement](#Future Improvement)
+- [User Guidance](#User Guidance)
 
 ## 📖 Literature Review
 An investigation of existing forecasting models on stock movement prediction, as well as news sentiment analysis 📰
