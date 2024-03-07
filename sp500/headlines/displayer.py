@@ -215,7 +215,7 @@ class TickerApplication:
             if event == "-TABLE-":
                 # First selected row
                 row_clicked = values["-TABLE-"][0]
-                url = self.data_overview[row_clicked][4]
+                url = self.data_overview[row_clicked][3]
 
                 if url.startswith("https://"):
                     webbrowser.open(url)
@@ -225,6 +225,7 @@ class TickerApplication:
                 self.run_window3()
             if event == "Sentiment Analysis":
                 self.update_window5()
+                self.run_window5()
 
         self.window2.close()
 
@@ -403,49 +404,41 @@ class TickerApplication:
                 else:
                     sg.popup(f"Tomorrow's stock movement: Down by {model_name}")
 
+ 
+
     def update_window5(self):
-        sentiment_df = calculate_score(self.news_data)
-        grouped_average = calculate_score(self.news_data)
-        stock_to_company = map_stock_names_to_company_names(sentiment_df,"Company")
-        visualization_dir = Path(__file__).resolve().parent.parent / "visualization" / "visualization"
-        create_wordcloud(
-                    df=sentiment_df,
-                    company_logo_paths=None,
-                    stock_to_company=stock_to_company,
-                    visualization_dir=visualization_dir,
-                )
-        base_dir = Path(__file__).parents[1] / "visualization" / "visualization"
+            average, sentiment_df = calculate_score(self.news_data)
+            stock_to_company = map_stock_names_to_company_names(sentiment_df, "Company")
+            visualization_dir = Path(__file__).resolve().parent.parent / "visualization" / "visualization"
+            create_wordcloud(df=sentiment_df, company_logo_paths=None, stock_to_company=stock_to_company, visualization_dir=visualization_dir)
 
-        sentiment_analysis_results = {}
+            sentiment_analysis_results = {}
+            for ticker, score in average.items():
+                if score > 0.05:
+                    sentiment_analysis_results[ticker] = f"We hold a bullish view on {ticker}. The sentiment score is {score}."
+                elif score < -0.05:
+                    sentiment_analysis_results[ticker] = f"We hold a bearish view on {ticker}. The sentiment score is {score}."
+                else:
+                    sentiment_analysis_results[ticker] = f"The stock price movement of {ticker} is uncertain. The sentiment score is {score}."
 
-        for ticker, score in grouped_average.items():
-            score = int(score)
-            if score > 0.05:
-                sentiment_analysis_results[ticker] = f"We hold a bullish view on {ticker}. The sentiment score is {score}."
-            elif score < -0.05:
-                sentiment_analysis_results[ticker] = f"We hold a bearish view on {ticker}. The sentiment score is {score}."
-            else:
-                sentiment_analysis_results[ticker] = f"The stock price movement of {ticker} is uncertain. The sentiment score is {score}."
+            images_tab = []
+            texts_tab = []
+            for company in self.tickers:
+                fig_path = visualization_dir / f"{company}_wordcloud.png"
+                sentiment_text = sentiment_analysis_results.get(company, "Sentiment analysis not available.")
+                images_tab.append([sg.Image(str(fig_path))])
+                texts_tab.append([sg.Text(sentiment_text)])
 
-        images_and_texts = []
-        for company in self.tickers:
-            fig_path = visualization_dir / f"{company}_word_cloud.png"
-            if fig_path.exists():
-              # Assume stock_to_company[company] gives us the ticker
-                ticker = stock_to_company.get(company)
-                sentiment_text = sentiment_analysis_results.get(ticker, "Sentiment analysis not available.")
-                images_and_texts.append((fig_path, sentiment_text))
+            tab1 = sg.Tab('Word Clouds', images_tab)
+            tab2 = sg.Tab('Sentiment Analysis', texts_tab)
+            tab_group = [[sg.TabGroup([[tab1, tab2]])]]
 
-        layout = [
-                [sg.Text(text), sg.Image(str(image_path))]
-                for image_path, text in images_and_texts
-            ] + [[sg.Button("Close")]]
+            layout = tab_group + [[sg.Button("Close")]]
+            self.window5 = sg.Window("Company Word Clouds and Sentiment Analysis", layout)
 
-        self.window5 = sg.Window("Company Word Clouds and Sentiment Analysis", layout)
-
+    def run_window5(self):
         while True:
-            event, _ = self.window5.read()
-            if event == sg.WINDOW_CLOSED or event == "Close":
+            event, values = self.window5.read()
+            if event == sg.WINDOW_CLOSED or event == 'Close':
                 break
-
-        self.window5.close()
+        
