@@ -35,10 +35,12 @@ Details the data sources and analytical methods used in the project.
 ## 📈 Factor Analysis
 Explores the relationship between expected returns and systematic risk.
 - **Sentiment Analysis**: Implemented to understand market sentiment's impact on stock movements 💬.
-- **Time-Series Data**: Analyzed to capture patterns and trends over time ⏳.
+- **Time-Series Data**: Analyzed to capture price patterns and trends over time ⏳.
 
-## ❓ What to Do Next?
-Outlines the forthcoming steps in the project's lifecycle
+## ❓ Target
+- Empower retail investors by integrating Artificial Intelligence (AI) tools, including Artificial Neural Networks (ANN) and Recurrent Neural Networks (RNN), to bridge the cognitive or knowledge gap in financial markets. These technologies aim to augment investors' decision-making processes with advanced, data-driven insights.
+- Enhance the Efficient Market Hypothesis perspective by incorporating sentiment analysis of news headlines. This approach tests the impact of public sentiment on company valuations, suggesting that markets might not instantly reflect all available information, particularly in the short term. Through sentiment analysis, we can identify potential lagged effects of public opinion on stock prices.
+- Utilize visualization tools like WordCloud to offer quick and intuitive analyses of news trends. This method enables investors to efficiently comprehend the overall sentiment and topical focus across multiple companies, streamlining the process of analyzing stock trends concurrently.
 
 ## How to Use?
 ### 1.1 File Structure
