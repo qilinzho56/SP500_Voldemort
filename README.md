@@ -46,9 +46,9 @@ Explores the relationship between expected returns and systematic risk, for each
 ### Training Period Performance for AAPL (2000-01-01 to 2024-03-03)
 | Model | Accuracy | Precision | Test Positive Percentage | Recall | F1 Score |
 |-------|----------|-----------|--------------------------|--------|----------|
-| RF    | 0.5554   | 0.5721    | 0.5499                   | 0.7605 | 0.6529   |
-| LSTM  | 0.5421   | 0.5421    | 0.5421                   | 1.0000 | 0.7031   |
-| ANN   | 0.5510   | 0.5505    | 0.5499                   | 1.0000 | 0.7101   |
+| RF 🌲   | 0.5554   | 0.5721    | 0.5499                   | 0.7605 | 0.6529   |
+| LSTM 🧽 | 0.5421   | 0.5421    | 0.5421                   | 1.0000 | 0.7031   |
+| ANN  🧠 | 0.5510   | 0.5505    | 0.5499                   | 1.0000 | 0.7101   |
 
 (note: Test Positive Percentage means the percentage of positive cases in the original data)
 ### Beck Testing Performance
