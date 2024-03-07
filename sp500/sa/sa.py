@@ -197,13 +197,14 @@ def calculate_score(df):
     # Based on PNU score calculated, obtained our view
     for ticker, score in average_predicted_scores.items():
         if score > 0.05:
-            print(f"We hold a bullish view on {ticker}.")
+            print(f"We hold a bullish view on {ticker}. The sentiment score is {score}.")
         elif score < -0.05:
-            print(f"We hold a bearish view on {ticker}")
+            print(f"We hold a bearish view on {ticker}. The sentiment score is {score}.")
         else:
-            print(f"The stock price movement of {ticker} is uncertain.")
+            print(f"The stock price movement of {ticker} is uncertain. The sentiment score is {score}.")
 
     print("Sentiment Analysis - Done!")
+    print(df)
 
     # labeled_data_test = match_comparison(labeled_data)
     # overall_sentiment_socre(labeled_data_test)
