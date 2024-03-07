@@ -32,10 +32,10 @@ Details the data sources and analytical methods used in the project.
 - **Stock Data**: Collected through Yahoo Finance API 📈.
 - **Economic Indicators**: Fetched from DBnomics API and Federal Reserve Economic Data API for macro-economic factor analysis 🌐.
 
-## 📈 Factor Analysis
-Explores the relationship between expected returns and systematic risk.
+## 📈 Factor Analysis (Company-Specific)
+Explores the relationship between expected returns and systematic risk, for each ticker in yfinance database.
 - **Sentiment Analysis**: Implemented to understand market sentiment's impact on stock movements 💬.
-- **Time-Series Data**: Analyzed to capture price patterns and trends over time ⏳.
+- **Time-Series Data**: Analyzed to capture price patterns and trends from 2010 to now, on a daily frequency ⏳. 
 
 ## ❓ Target
 - **Empower retail investors by integrating Artificial Intelligence (AI) tools**, including traditional Artificial Neural Networks (ANN) and Recurrent Neural Networks (RNN), to bridge the cognitive or knowledge gap in financial markets. These technologies aim to augment investors' decision-making processes with advanced, data-driven insights.
