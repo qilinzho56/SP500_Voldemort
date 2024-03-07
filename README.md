@@ -65,6 +65,11 @@ From the results on AAPL stock above, we have **slightly better prediction than 
 
 By utilizing news headlines marked as **Negative High and Positive Low** through sentiment analysis (respectively labeled as positive and negative in wordcloud), it is possible to more accurately reflect the media's perspective on a stock while also enhancing the precision of word cloud coloring.
 
+<p float="left">
+  <img src="sp500/visualization/visualization/AAPL_wordcloud.png.png" alt="WC After" width="400"/>
+  <img src="AAPL_prev.png" alt="WC Prev" width="400"/> 
+</p>
+
 ## 🌟 Future Improvement
 - **GUI design**: we currently utilize **the best three machine learning models pre-trained on Apple Stock** data streamlines the user experience by eliminating the need for daily model retraining. Future improvement may be thread implementation and training speed optimization.
 - **News Sentiment Integration to price-only model**: due to time constraints, the application currently handles the analysis of news sentiment and its impact on stock prices separately from the direct stock movement forecasts. Future improvement may be expanded news scraping, **broadening the scope of news scraping to include sources beyond those offered by Finviz**, which typically covers news up to only five days.
