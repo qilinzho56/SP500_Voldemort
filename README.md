@@ -85,15 +85,19 @@ Anaconda and Poetry installed on your system.
 1. Verify Anaconda's Python Installation
 ```shell
 which python
+```
 2. Configure Poetry to Use Anaconda's Python 
 ```shell
 poetry env use /path/to/anaconda3/bin/python
+```
 3. Installing Dependencies
 ```shell
 poetry install
+```
 4. Running the GUI
 ```shell
 poetry run python sp500/headlines/app.py
+```
 =======
 
 
