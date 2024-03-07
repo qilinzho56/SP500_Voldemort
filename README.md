@@ -1,7 +1,7 @@
 # 📈 S&P 500 Stock Movement Prediction
 
 ## 🌟 Overview
-This repository hosts the code 🧑‍💻 and documentation 📄 for a machine learning project aimed at predicting stock market movements. We use various data sources 📊, factor analysis 🔍, and machine learning techniques 🤖, including sentiment analysis and time-series forecasting. We have also created a GUI for users to interact with stock trend analysis.
+This repository hosts the code 🧑‍💻 and documentation 📄 for a machine learning project aimed at predicting stock market movements. We use various data sources 📊, factor analysis 🔍, and machine learning techniques 🤖, including sentiment analysis and time-series forecasting. We have also created a GUI 🎮 for users to interact with stock trend analysis.
 
 ## 📚 Table of Contents
 - [Literature Review](#literature-review)
