@@ -81,7 +81,7 @@ README.md
 
 ```
 <<<<<<< HEAD
-### 1.2 Instruction
+### 1.1 General User Instruction
 This guide outlines how to configure and run our TensorFlow model GUI using Anaconda and Poetry, focusing on compatibility with Python versions supported by TensorFlow (<3.12).
 
 **Prerequisites**
@@ -106,7 +106,7 @@ poetry run python sp500/headlines/app.py
 =======
 
 
-### 1.2 User Instruction
+### 1.2 Specific User Instruction
 1. Clone repository ```git clone git@github.com:qilinzho56/SP500.git``` in terminal
 2. Run ```pip install --user -U nltk``` in terminal
 3. Run ```poetry install``` to install necessary packages in terminal
