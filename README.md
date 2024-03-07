@@ -83,7 +83,7 @@ README.md
 
 ```
 <<<<<<< HEAD
-### 1.1 General User Instruction
+### 1.2 General User Instruction
 This guide outlines how to configure and run our TensorFlow model GUI using Anaconda and Poetry, focusing on compatibility with Python versions supported by TensorFlow (<3.12).
 
 **Prerequisites** 
