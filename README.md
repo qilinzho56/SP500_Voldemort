@@ -28,8 +28,9 @@ Examination of various Python libraries 🐍 for data analysis and machine learn
 Details the data sources and analytical methods used in the project.
 
 ### 🛠️ Data Sources
+- **Headline News**: Scraped from finviz 📈 https://finviz.com/.
 - **Stock Data**: Collected through Yahoo Finance API 📈.
-- **Economic Indicators**: Fetched from DBnomics API for FED and OECD data 🌐.
+- **Economic Indicators**: Fetched from DBnomics API and Federal Reserve Economic Data API for macro-economic factor analysis 🌐.
 
 ## 📈 Factor Analysis
 Explores the relationship between expected returns and systematic risk.
