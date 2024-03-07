@@ -36,7 +36,7 @@ Explores the relationship between expected returns and systematic risk, for each
 - **Sentiment Analysis**: Implemented to understand market sentiment's impact on stock movements 💬.
 - **Time-Series Data**: Analyzed to capture price patterns and trends from 2000 to now, on a daily frequency to the train three time-series ML models, with 5 years as a cycle for backtesting **Random Forests, ANN, LSTM**⏳.
 
-## Time Series Prediction Results Overview (Binary Classification Problem)
+## ⏰ Time Series Prediction Results Overview (Binary Classification Problem)
 **Tomorrow's stock movement prediction  Up or Down?**
 ### Training Period Performance for AAPL (2000-01-01 to 2024-03-03)
 | Model | Accuracy | Precision | Test Positive Percentage | Recall | F1 Score |
@@ -54,6 +54,8 @@ Explores the relationship between expected returns and systematic risk, for each
 | ANN   | 0.5279   | 0.5280    | 0.5279                   | 0.9989 | 0.6908   |
 
 From the results on AAPL stock above, we have **slightly better prediction than baseline distribution** (i.e., comparing precision with test positive percentage). In the training, with default threshold 0.5, LSTM and ANN generally had a relatively high recall with low precision. On the other hand, Random Forests have better precision with low recall. We suggest users to change the threshold and train deeper networks for better results.
+
+## 情绪 Time Series Prediction Results Overview (Binary Classification Problem)
 
 ## ❓ Target
 - **Empower retail investors by integrating Artificial Intelligence (AI) tools**, including traditional Artificial Neural Networks (ANN) and Recurrent Neural Networks (RNN), to bridge the cognitive or knowledge gap in financial markets. These technologies aim to augment investors' decision-making processes with advanced, data-driven insights.
