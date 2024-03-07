@@ -79,7 +79,10 @@ Scheme.png
 ```
 ### 1.2 Instruction
 1. 
-2. 
+2. Run 
+```shell
+poetry run python sp500/headlines/app.py
+3.```
 
 
 ## Reference

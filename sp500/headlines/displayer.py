@@ -4,7 +4,9 @@ import PySimpleGUI as sg
 from sp500.time_series.visualization.company_profile import company_index_exhibit
 from sp500.time_series.visualization.stock_movement import plot_stock_data_interactive
 from sp500.time_series.visualization.best_model_viz import model_summary_figs, MODELS
+from sp500.time_series.visualization.macro_indicators_viz import plot_macro_indicators
 from sp500.time_series.time_series_preprocessing import test_train_prep
+from sp500.time_series.price_model import rnd_best_params
 import webbrowser
 from pathlib import Path
 
@@ -24,7 +26,7 @@ def create_row_layout(df, title):
 
     Returns
     -------
-    A list of lists as multiple rows in PySimpleGUI layout
+    a list of lists as multiple rows in PySimpleGUI layout
     """
     headings = df.columns.tolist()
     values = df.iloc[0].tolist()
@@ -48,7 +50,7 @@ def add_plots_and_tables_to_layout(plots, tables, base_dir):
 
     Returns
     -------
-    A list of lists as multiple rows in PySimpleGUI layout
+    a list of lists as multiple rows in PySimpleGUI layout
     """
     layout = []
 

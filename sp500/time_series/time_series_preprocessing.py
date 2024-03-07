@@ -6,6 +6,7 @@ from fredapi import Fred
 from datetime import datetime
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import train_test_split
+from sp500.headlines.scraper import headlines
 
 
 HORIZON = {"2D": 2, "5D": 5, "3M": 63, "6M": 126, "1Y": 252}
@@ -222,7 +223,7 @@ def ticker_macro_merge(ticker_df, macro_indicators):
     return ticker_df
 
 
-def test_train_prep(company):
+def test_train_prep(company, news_data=None):
     """
     Prepare time-series training and testing data for the stock movement prediction model
 
@@ -246,10 +247,13 @@ def test_train_prep(company):
     combined_df["Target"] = (combined_df["Tomorrow"] > combined_df["Adj Close"]).astype(
         int
     )
-    
+
     # Imputed misising values with a rolling average in a window size of 5
     combined_df = combined_df.fillna(combined_df.rolling(window=5, min_periods=1).mean())
     combined_df = combined_df.dropna()
+
+    if news_data:
+        combined_df = news_data.merge(combined_df, how="right", left_index=True, right_index=True)
 
     y = combined_df["Target"]
 
@@ -258,6 +262,7 @@ def test_train_prep(company):
             ["Target", "Close Adj Close", "Adj Close", "Tomorrow", "Volume"]
         )
     ]
+    
     scaler = MinMaxScaler()
     X_scaled = scaler.fit_transform(X)
     X_scaled_df = pd.DataFrame(X_scaled, index=X.index, columns=X.columns)

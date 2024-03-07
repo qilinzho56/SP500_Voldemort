@@ -18,7 +18,7 @@ def headlines(headers, company_list, max_days):
 
     Returns
     -------
-    df: a dataframe including the date, time, company, headline and and url link
+    news_df: a dataframe including the date as index, time, company, headline and and url link
     """
     data = []
     date_pattern = re.compile(r"[A-Za-z]+")
@@ -43,7 +43,13 @@ def headlines(headers, company_list, max_days):
                 else:
                     cur_date = time_extract.split()[0]
                     cur_time = time_extract.split()[1]
+
                 days_visited += 1
+            else:
+                if not time_extract.split()[0]:
+                    cur_time = time_extract.split()[1]
+                else:
+                    cur_time = time_extract.split()[0]
 
                 if days_visited > max_days:
                     print(f"Maximum Days Reached For {company}")
@@ -57,8 +63,9 @@ def headlines(headers, company_list, max_days):
                 data.append([cur_date, cur_time, company, headline, url[0]])
             else:
                 print("Private News")
-        
-        df = pd.DataFrame(data, columns=["Date", "Time", "Company", "Headline", "URL"])
-        df.to_csv("./sp500/sa/data/New_data.csv", index=False)
 
-    return df
+        news_df = pd.DataFrame(data, columns=["Date", "Time", "Company", "Headline", "URL"])
+        news_df = news_df.set_index("Date")
+        news_df.index = pd.to_datetime(news_df.index, format="%b-%d-%y")
+
+    return news_df
