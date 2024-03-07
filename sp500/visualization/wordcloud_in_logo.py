@@ -1,16 +1,8 @@
 import os
 from pathlib import Path
 import pandas as pd
-from create_word_cloud import create_wordcloud
+from create_word_cloud import create_wordcloud, map_stock_names_to_company_names
 
-STOCK_TO_COMPANY = {
-    "AAPL": "Apple",
-    "NVDA": "Nvidia",
-    "BA": "Boeing",
-    "GOOG": "Google",
-    "AMZN": "Amazon",
-    "STOCK": "Stock",
-}
 
 PICTURE_PATE = os.path.dirname(os.path.abspath(__file__))
 
@@ -27,10 +19,11 @@ def run_word_cloud():
     filename = Path(__file__).parent.parent / "sa/data/Finished_test_sa.csv"
     visualization_dir = Path(__file__).resolve().parent / "visualization"
     df = pd.read_csv(filename)
+    stock_to_company = map_stock_names_to_company_names(df, "Company")
     create_wordcloud(
         df=df,
         company_logo_paths=COMPANY_LOGO_PATHS,
-        stock_to_company=STOCK_TO_COMPANY,
+        stock_to_company=stock_to_company,
         visualization_dir=visualization_dir,
     )
 
