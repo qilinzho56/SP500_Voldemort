@@ -39,29 +39,29 @@ Outlines the forthcoming steps in the project's lifecycle
 ## How to Use?
 ### 1.1 File Structure
 ```python
-sp500/
-    compile/
+sp500
+    compile
         __init__.py
         cleanup.py
         pos.py
-    headlines/
+    headlines
         __init__.py
         app.py
         displayer.py
         scraper.py
-    sa/
-        data/
+    sa
+        data
         __init__.py
         analyzer.py
         sa.py
         test.py 
         train_classifier.py
-    time_series/
-        visualization/
+    time_series
+        visualization
         price_model.py
         time_series_preprocessing.py
-    visualization/
-        visualization/
+    visualization
+        visualization
         __init__.py
         create_word_clooud.py
         datatypes.py
