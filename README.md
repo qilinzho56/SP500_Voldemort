@@ -60,7 +60,7 @@ Explores the relationship between expected returns and systematic risk, for each
 
 From the results on AAPL stock above, we have **slightly better prediction than baseline distribution** (i.e., comparing precision with test positive percentage). In the training, with default threshold 0.5, LSTM and ANN generally had a relatively high recall with low precision. On the other hand, Random Forests have better precision with low recall. We suggest users to change the threshold and train deeper networks for better results.
 
-## 📰 Sentiment Analysis and Word Cloud 
+## 📰 Sentiment Analysis and Word Cloud (Vocab-based Classification and Visualization)
 
 
 ## 🌟 Future Improvement
