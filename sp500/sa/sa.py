@@ -204,7 +204,6 @@ def calculate_score(df):
             print(f"The stock price movement of {ticker} is uncertain. The sentiment score is {score}.")
 
     print("Sentiment Analysis - Done!")
-    print(df)
 
     # labeled_data_test = match_comparison(labeled_data)
     # overall_sentiment_socre(labeled_data_test)

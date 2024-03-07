@@ -1,7 +1,10 @@
 from sp500.sa.sa import calculate_score
 from sp500.headlines.scraper import headlines
+from sp500.visualization.create_word_cloud import create_wordcloud, map_stock_names_to_company_names
+from sp500.visualization.datatypes import GroupedColorFunc
 import pathlib
 import pandas as pd
+from pathlib import Path
 
 def implementation(df = None):
     """
@@ -14,9 +17,11 @@ def implementation(df = None):
         )
 
         labeled_data = pd.read_csv(labeled_data_filename, encoding="unicode_escape")
-        df = calculate_score(labeled_data)
+        df1 = calculate_score(labeled_data)
     else:
-        df = calculate_score(df)
+        df1 = calculate_score(df)
+    
+    return df1
         
 if __name__ == "__main__":
     headers = {
@@ -25,4 +30,14 @@ if __name__ == "__main__":
     }
 
     news_df =  headlines(headers, ["AAPL"], 5)
-    implementation(news_df)
+    sentiment_df = implementation(news_df)
+    stock_to_company = map_stock_names_to_company_names(sentiment_df,"Company")
+    visualization_dir = Path(__file__).resolve().parent.parent / "visualization" / "visualization"
+    create_wordcloud(
+        df=sentiment_df,
+        company_logo_paths=None,
+        stock_to_company=stock_to_company,
+        visualization_dir=visualization_dir,
+    )
+
+

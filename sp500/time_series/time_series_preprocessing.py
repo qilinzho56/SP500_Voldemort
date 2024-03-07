@@ -7,7 +7,7 @@ from datetime import datetime
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import train_test_split
 from sp500.headlines.scraper import headlines
-
+from sp500.sa.analyzer import implementation
 
 HORIZON = {"2D": 2, "5D": 5, "3M": 63, "6M": 126, "1Y": 252}
 
@@ -225,23 +225,23 @@ def ticker_macro_merge(ticker_df, macro_indicators):
 
 def test_train_prep(company, news_data=None):
     """
-    Prepare time-series training and testing data for the stock movement prediction model
+     Prepare time-series training and testing data for the stock movement prediction model
 
-    Parameters
-    ----------
-    company: a string name
+     Parameters
+     ----------
+     company: a string name
 
-    Returns
-    -------
-   all_data, X_train, X_test, y_train, y_test:  a 5-tuple containing a scaled and preprocessed dataframe 
-   and the training/testing numpy arrays
+     Returns
+     -------
+    all_data, X_train, X_test, y_train, y_test:  a 5-tuple containing a scaled and preprocessed dataframe
+    and the training/testing numpy arrays
     """
     ticker_df = load_ticker_data(company)
     macro_indicators = fetch_macro_indicators()
     preprocess_macro_data(macro_indicators)
     combined_df = ticker_macro_merge(ticker_df, macro_indicators)
 
-    combined_df = combined_df.apply(pd.to_numeric, errors='coerce')
+    combined_df = combined_df.apply(pd.to_numeric, errors="coerce")
 
     combined_df["Tomorrow"] = combined_df["Adj Close"].shift(-1)
     combined_df["Target"] = (combined_df["Tomorrow"] > combined_df["Adj Close"]).astype(
@@ -249,20 +249,49 @@ def test_train_prep(company, news_data=None):
     )
 
     # Imputed misising values with a rolling average in a window size of 5
-    combined_df = combined_df.fillna(combined_df.rolling(window=5, min_periods=1).mean())
-    combined_df = combined_df.dropna()
+    combined_df = combined_df.fillna(
+        combined_df.rolling(window=30, min_periods=1).mean()
+    )
 
-    if news_data:
-        combined_df = news_data.merge(combined_df, how="right", left_index=True, right_index=True)
+    if not news_data.empty:
+        news_data['Date'] = pd.to_datetime(news_data['Date'])
+        news_data['Time'] = pd.to_datetime(news_data['Time'], format='%I:%M%p').dt.time
+        news_data['Datetime'] = news_data.apply(lambda r : datetime.combine(r['Date'], r['Time']), 1)
+
+        # Adding timezone information
+        news_data['Datetime'] = news_data['Datetime'].dt.tz_localize('Etc/GMT+5')
+
+        # Generating full range with timezone
+        start_date = news_data['Datetime'].min().tz_convert(None).replace(hour=0, minute=0)
+        end_date = news_data['Datetime'].max().tz_convert(None).replace(hour=23, minute=59)
+        full_range = pd.date_range(start=start_date, end=end_date, freq='T', tz='Etc/GMT+5').to_frame(index=False, name='Datetime')
+
+        # Merge the original dataframe with the full range to include missing minutes as NaN
+        df_full = full_range.merge(news_data, on='Datetime', how='outer').drop(['Date', 'Time'], axis=1)
+
+        # Sort the dataframe by datetime
+        df_full = df_full.sort_values(by='Datetime').reset_index(drop=True)
+
+        # Replace NaT with NA
+        news_data = df_full.fillna('NA')
+        combined_df = news_data.merge(
+            combined_df, how="right", left_index=True, right_index=True
+        )
+
+    combined_df = combined_df.dropna()
 
     y = combined_df["Target"]
 
-    X = combined_df[
-        combined_df.columns.difference(
-            ["Target", "Close Adj Close", "Adj Close", "Tomorrow", "Volume"]
-        )
-    ]
-    
+    combined_df = implementation(combined_df)
+
+    print(combined_df)
+    non_object_cols = combined_df.select_dtypes(exclude=["object"])
+    final_columns = non_object_cols.columns.difference(
+        ["Target", "Close Adj Close", "Adj Close", "Tomorrow", "Volume"]
+    )
+
+    X = combined_df[final_columns]
+
     scaler = MinMaxScaler()
     X_scaled = scaler.fit_transform(X)
     X_scaled_df = pd.DataFrame(X_scaled, index=X.index, columns=X.columns)
@@ -273,3 +302,12 @@ def test_train_prep(company, news_data=None):
     )
 
     return all_data, X_train, X_test, y_train, y_test
+
+if __name__ == "__main__":
+    headers = {
+        "User-Agent": "Mozilla/5.0",
+        "Referer": "http://finviz.com/quote.ashx?t=",
+    }
+
+    news_df =  headlines(headers, ["AAPL"], 5)
+    all_data, _, _, _, _ = test_train_prep("AAPL", news_df)

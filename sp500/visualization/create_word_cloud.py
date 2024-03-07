@@ -1,6 +1,6 @@
 from wordcloud import WordCloud, STOPWORDS
 import matplotlib.pyplot as plt
-from datatypes import GroupedColorFunc
+from sp500.visualization.datatypes import GroupedColorFunc
 import os
 import re
 import numpy as np
