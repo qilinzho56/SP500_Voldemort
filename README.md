@@ -34,7 +34,7 @@ Details the data sources and analytical methods used in the project.
 ## 📈 Factor Analysis (Company-Specific)
 Explores the relationship between expected returns and systematic risk, for each ticker in yfinance database.
 - **Sentiment Analysis**: Implemented to understand market sentiment's impact on stock movements 💬.
-- **Time-Series Data**: Analyzed to capture price patterns and trends from 2000 to now, on a daily frequency to the train three time-series ML models, with 4 years as a cycle for backtesting **(Random Forests, ANN, LSTM)**⏳.
+- **Time-Series Data**: Analyzed to capture price patterns and trends from 2000 to now, on a daily frequency to the train three time-series ML models, with 5 years as a cycle for backtesting **(Random Forests, ANN, LSTM)**⏳.
 
 ## Time Series Prediction Results Overview (Binary Classification Problem)
 **Tomorrow's stock movement prediction  Up or Down?**
