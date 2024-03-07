@@ -13,7 +13,7 @@ This repository hosts the code 🧑‍💻 and documentation 📄 for a machine 
 ![Project Scheme](Scheme.png)
 
 ## 📖 Literature Review
-A thorough investigation of existing research on stock movement prediction methodologies.
+An investigation of existing forecasting models on stock movement prediction, as well as news sentiment analysis 📰
 
 ## 🔎 Package Exploration
 Examination of various Python libraries 🐍 for data analysis and machine learning.
