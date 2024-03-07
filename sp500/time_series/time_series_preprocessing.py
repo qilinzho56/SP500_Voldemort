@@ -271,12 +271,3 @@ def test_train_prep(company, news_data=None):
 
     return all_data, X_train, X_test, y_train, y_test
 
-if __name__ == "__main__":
-    headers = {
-        "User-Agent": "Mozilla/5.0",
-        "Referer": "http://finviz.com/quote.ashx?t=",
-    }
-
-    #news_df =  headlines(headers, ["AAPL"], 5)
-    all_data, _, _, _, _ = test_train_prep("AAPL")
-    print(all_data)
