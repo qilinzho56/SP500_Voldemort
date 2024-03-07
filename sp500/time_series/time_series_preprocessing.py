@@ -248,49 +248,19 @@ def test_train_prep(company, news_data=None):
         int
     )
 
-    # Imputed misising values with a rolling average in a window size of 5
     combined_df = combined_df.fillna(
         combined_df.rolling(window=30, min_periods=1).mean()
     )
-
-    if not news_data.empty:
-        news_data['Date'] = pd.to_datetime(news_data['Date'])
-        news_data['Time'] = pd.to_datetime(news_data['Time'], format='%I:%M%p').dt.time
-        news_data['Datetime'] = news_data.apply(lambda r : datetime.combine(r['Date'], r['Time']), 1)
-
-        # Adding timezone information
-        news_data['Datetime'] = news_data['Datetime'].dt.tz_localize('Etc/GMT+5')
-
-        # Generating full range with timezone
-        start_date = news_data['Datetime'].min().tz_convert(None).replace(hour=0, minute=0)
-        end_date = news_data['Datetime'].max().tz_convert(None).replace(hour=23, minute=59)
-        full_range = pd.date_range(start=start_date, end=end_date, freq='T', tz='Etc/GMT+5').to_frame(index=False, name='Datetime')
-
-        # Merge the original dataframe with the full range to include missing minutes as NaN
-        df_full = full_range.merge(news_data, on='Datetime', how='outer').drop(['Date', 'Time'], axis=1)
-
-        # Sort the dataframe by datetime
-        df_full = df_full.sort_values(by='Datetime').reset_index(drop=True)
-
-        # Replace NaT with NA
-        news_data = df_full.fillna('NA')
-        combined_df = news_data.merge(
-            combined_df, how="right", left_index=True, right_index=True
-        )
 
     combined_df = combined_df.dropna()
 
     y = combined_df["Target"]
 
-    combined_df = implementation(combined_df)
-
-    print(combined_df)
-    non_object_cols = combined_df.select_dtypes(exclude=["object"])
-    final_columns = non_object_cols.columns.difference(
-        ["Target", "Close Adj Close", "Adj Close", "Tomorrow", "Volume"]
-    )
-
-    X = combined_df[final_columns]
+    X = combined_df[
+        combined_df.columns.difference(
+            ["Target", "Close Adj Close", "Adj Close", "Tomorrow", "Volume"]
+        )
+    ]
 
     scaler = MinMaxScaler()
     X_scaled = scaler.fit_transform(X)
@@ -309,5 +279,6 @@ if __name__ == "__main__":
         "Referer": "http://finviz.com/quote.ashx?t=",
     }
 
-    news_df =  headlines(headers, ["AAPL"], 5)
-    all_data, _, _, _, _ = test_train_prep("AAPL", news_df)
+    #news_df =  headlines(headers, ["AAPL"], 5)
+    all_data, _, _, _, _ = test_train_prep("AAPL")
+    print(all_data)

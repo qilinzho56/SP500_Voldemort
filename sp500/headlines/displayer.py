@@ -7,8 +7,13 @@ from sp500.time_series.visualization.best_model_viz import model_summary_figs, M
 from sp500.time_series.visualization.macro_indicators_viz import plot_macro_indicators
 from sp500.time_series.time_series_preprocessing import test_train_prep
 from sp500.time_series.price_model import rnd_best_params
+from sp500.sa.sa import calculate_score, grouped_average
+from sp500.headlines.scraper import headlines
+from sp500.visualization.create_word_cloud import create_wordcloud, map_stock_names_to_company_names
+from sp500.visualization.datatypes import GroupedColorFunc
 import webbrowser
 from pathlib import Path
+
 
 FONT = {"Arial Bold", 16}
 sg.set_options(font=FONT)
@@ -121,6 +126,7 @@ class TickerApplication:
         self.window2 = None
         self.window3 = None
         self.window4 = None
+        self.window5 = None
         self.html_paths = {}
         self.company_data = {}
 
@@ -192,6 +198,7 @@ class TickerApplication:
                     key="-TABLE-",
                 ),
                 sg.Button("For More Detailed Analysis"),
+                sg.Button("Sentiment Analysis")
             ]
         ]
 
@@ -216,6 +223,8 @@ class TickerApplication:
             if event == "For More Detailed Analysis":
                 self.update_window3()
                 self.run_window3()
+            if event == "Sentiment Analysis":
+                self.update_window5()
 
         self.window2.close()
 
@@ -393,3 +402,50 @@ class TickerApplication:
                     sg.popup(f"Tomorrow's stock movement: Up by {model_name}")
                 else:
                     sg.popup(f"Tomorrow's stock movement: Down by {model_name}")
+
+    def update_window5(self):
+        sentiment_df = calculate_score(self.news_data)
+        grouped_average = calculate_score(self.news_data)
+        stock_to_company = map_stock_names_to_company_names(sentiment_df,"Company")
+        visualization_dir = Path(__file__).resolve().parent.parent / "visualization" / "visualization"
+        create_wordcloud(
+                    df=sentiment_df,
+                    company_logo_paths=None,
+                    stock_to_company=stock_to_company,
+                    visualization_dir=visualization_dir,
+                )
+        base_dir = Path(__file__).parents[1] / "visualization" / "visualization"
+
+        sentiment_analysis_results = {}
+
+        for ticker, score in grouped_average.items():
+            score = int(score)
+            if score > 0.05:
+                sentiment_analysis_results[ticker] = f"We hold a bullish view on {ticker}. The sentiment score is {score}."
+            elif score < -0.05:
+                sentiment_analysis_results[ticker] = f"We hold a bearish view on {ticker}. The sentiment score is {score}."
+            else:
+                sentiment_analysis_results[ticker] = f"The stock price movement of {ticker} is uncertain. The sentiment score is {score}."
+
+        images_and_texts = []
+        for company in self.tickers:
+            fig_path = visualization_dir / f"{company}_word_cloud.png"
+            if fig_path.exists():
+              # Assume stock_to_company[company] gives us the ticker
+                ticker = stock_to_company.get(company)
+                sentiment_text = sentiment_analysis_results.get(ticker, "Sentiment analysis not available.")
+                images_and_texts.append((fig_path, sentiment_text))
+
+        layout = [
+                [sg.Text(text), sg.Image(str(image_path))]
+                for image_path, text in images_and_texts
+            ] + [[sg.Button("Close")]]
+
+        self.window5 = sg.Window("Company Word Clouds and Sentiment Analysis", layout)
+
+        while True:
+            event, _ = self.window5.read()
+            if event == sg.WINDOW_CLOSED or event == "Close":
+                break
+
+        self.window5.close()
