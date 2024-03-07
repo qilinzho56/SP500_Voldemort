@@ -30,9 +30,6 @@ Explores the relationship between expected returns and systematic risk.
 - **Sentiment Analysis**: Implemented to understand market sentiment's impact on stock movements 💬.
 - **Time-Series Data**: Analyzed to capture patterns and trends over time ⏳.
 
-## 💻 Development Process
-Documentation of the development steps, including data collection and GUI creation 🖥️.
-
 ## ❓ What to Do Next?
 Outlines the forthcoming steps in the project's lifecycle
 
