@@ -11,8 +11,8 @@ This repository hosts the code 🧑‍💻 and documentation 📄 for a machine 
 - [Factor Analysis](#factor-analysis)
 - [Target](#target)
 - [Results](#Results)
-- [Future Improvement](#Future Improvement)
-- [User Guidance](#User Guidance)
+- [Future Improvement](#FutureImprovement)
+- [User Guidance](#UserGuidance)
 
 ## 📖 Literature Review
 An investigation of existing forecasting models on stock movement prediction, as well as news sentiment analysis 📰
