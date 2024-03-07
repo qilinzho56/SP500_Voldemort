@@ -6,7 +6,6 @@ def implementation(df = None):
     """
     Implement the sentiment analyzer.
     """
-    # Import the file
 
     if not df:
         labeled_data_filename = (
@@ -14,9 +13,7 @@ def implementation(df = None):
         )
 
         labeled_data = pd.read_csv(labeled_data_filename, encoding="unicode_escape")
-        calculate_score(labeled_data)
+        df = calculate_score(labeled_data)
     else:
-        calculate_score(df)
-
-if __name__ == "__main__":
-    implementation()
+        df = calculate_score(df)
+        

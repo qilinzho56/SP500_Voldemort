@@ -58,6 +58,10 @@ sp500
         train_classifier.py
     time_series
         visualization
+            best_model_viz.py
+            company_profile.py
+            macro_indicators_viz.py
+            stock_movement.py
         price_model.py
         time_series_preprocessing.py
     visualization
@@ -65,11 +69,10 @@ sp500
         __init__.py
         create_word_clooud.py
         datatypes.py
-Macro Indicators.png
+        wordcloud_in_logo.py
 poetry.lock
 pyproject.toml
 README.md
-Scheme.png
 
 ```
 
@@ -80,6 +83,7 @@ Scheme.png
 3. Run ```poetry install``` to install necessary packages in terminal
 4. Activate virtual environment by running ```poetry shell``` in terminal
 5. Run the command line ```poetry run python sp500/headlines/app.py``` in terminal to interact with our application
+    If you are using a Mac with an M1, you may encounter tensorflow installation problems (zsh: illegal hardware instruction). Please refer to https://stackoverflow.com/questions/65383338/zsh-illegal-hardware-instruction-python-when-installing-tensorflow-on-macbook 
 
 
 ## Reference
