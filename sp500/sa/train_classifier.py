@@ -60,7 +60,7 @@ def train_classifier(labeled_dataset):
         ["Segmentation Compound", "Segmentation Textblob", "Label (P, N, U-neutral)"]
     ]
 
-    # Create a new column containing the tuple of segmentation compound and 
+    # Create a new column containing the tuple of segmentation compound and
     # segmentation textblob, and label
     df = df.assign(
         mapping=df.apply(

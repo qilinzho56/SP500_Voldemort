@@ -338,22 +338,25 @@ def create_wordcloud(
         plt.savefig(filepath)
         plt.close()
 
-# Simplified version of wordcloud without controlling company name frequency, for GUI compatibility 
-def create_wordcloud_for_company(df, company_name, company_logo_path=None, visualization_dir="visualization"):
+
+# Simplified version of wordcloud without controlling company name frequency, for GUI compatibility
+def create_wordcloud_for_company(
+    df, company_name, company_logo_path=None, visualization_dir="visualization"
+):
     """
-    Generates a word cloud for a specified company, optionally shaped by the company's logo, 
+    Generates a word cloud for a specified company, optionally shaped by the company's logo,
     and saves it to a specified directory.
 
     Parameters:
         df (pandas.DataFrame): DataFrame containing headlines and associated sentiment scores and labels.
         company_name (str): The name of the company for which to generate the word cloud.
-        company_logo_path (str, optional): Path to the company's logo file. If provided, the word cloud 
+        company_logo_path (str, optional): Path to the company's logo file. If provided, the word cloud
             will be shaped like the company's logo.
         visualization_dir (str): Path to the directory where the word cloud image will be saved.
             If the directory does not exist, it will be created. Defaults to "visualization".
-    
+
     Returns:
-        figpath (str): path to wordcloud figure 
+        figpath (str): path to wordcloud figure
     """
     if not os.path.exists(visualization_dir):
         os.makedirs(visualization_dir)
@@ -363,24 +366,24 @@ def create_wordcloud_for_company(df, company_name, company_logo_path=None, visua
     if company_logo_path:
         mask = np.array(Image.open(company_logo_path))
     else:
-        mask = None  
+        mask = None
 
-    df_company = df[df['Company'] == company_name]
+    df_company = df[df["Company"] == company_name]
 
-    text = " ".join(df_company['Headline'].tolist())
+    text = " ".join(df_company["Headline"].tolist())
 
-    color_func = None  
+    color_func = None
 
     wordcloud = WordCloud(
-        background_color='white',
+        background_color="white",
         stopwords=custom_stopwords,
         mask=mask,
         max_words=200,
         max_font_size=120,
         scale=2,
         contour_width=3,
-        contour_color='black',
-        random_state=21
+        contour_color="black",
+        random_state=21,
     ).generate(text)
 
     if color_func:

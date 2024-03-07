@@ -79,9 +79,7 @@ def add_plots_and_tables_to_layout(plots, tables, base_dir):
 
 
 def create_analysis_window(company):
-    layout = [
-        [sg.Text(f"Time-series analysis and prediction for {company}")]
-    ]
+    layout = [[sg.Text(f"Time-series analysis and prediction for {company}")]]
 
     return sg.Window(f"Analysis for {company}", layout, modal=True)
 
@@ -199,12 +197,13 @@ class TickerApplication:
                     key="-TABLE-",
                 ),
                 sg.Column(
-            [
-                [sg.Button("For More Detailed Analysis")],
-                [sg.Button("(First Press)Sentiment Analysis")],
-                [sg.Button("Sample Word Clouds")],
-                [sg.Button("(Second Press)Choose One Company for Word Clouds")]
-            ])
+                    [
+                        [sg.Button("For More Detailed Analysis")],
+                        [sg.Button("(First Press)Sentiment Analysis")],
+                        [sg.Button("Sample Word Clouds")],
+                        [sg.Button("(Second Press)Choose One Company for Word Clouds")],
+                    ]
+                ),
             ]
         ]
 
@@ -236,7 +235,7 @@ class TickerApplication:
             if event == "Sample Word Clouds":
                 self.update_window6()
                 self.run_window6()
-            if event == "(Second Press)Choose One Company for Word Clouds":  
+            if event == "(Second Press)Choose One Company for Word Clouds":
                 self.init_window7()
                 self.run_window7()
 
@@ -364,11 +363,7 @@ class TickerApplication:
 
         top_layout = [[sg.Text(f"Time-series analysis and prediction for {company}")]]
 
-        final_layout = (
-            top_layout
-            + [[model_selection_column]]
-            + [[scrollable_column]]
-        )
+        final_layout = top_layout + [[model_selection_column]] + [[scrollable_column]]
 
         self.window4 = sg.Window(
             f"Price-only Model Prediction Analysis for {company}",
@@ -413,26 +408,41 @@ class TickerApplication:
         sentiment_analysis_results = {}
         for ticker, score in self.average.items():
             if score > 0.05:
-                sentiment_analysis_results[
-                    ticker
-                ] = f"We hold a bullish view on {ticker}. The sentiment score is {score:.2f}."
+                sentiment_analysis_results[ticker] = (
+                    f"We hold a bullish view on {ticker}. The sentiment score is {score:.2f}."
+                )
             elif score < -0.05:
-                sentiment_analysis_results[
-                    ticker
-                ] = f"We hold a bearish view on {ticker}. The sentiment score is {score:.2f}."
+                sentiment_analysis_results[ticker] = (
+                    f"We hold a bearish view on {ticker}. The sentiment score is {score:.2f}."
+                )
             else:
-                sentiment_analysis_results[
-                    ticker
-                ] = f"The stock price movement of {ticker} is uncertain. The sentiment score is {score:.2f}."
+                sentiment_analysis_results[ticker] = (
+                    f"The stock price movement of {ticker} is uncertain. The sentiment score is {score:.2f}."
+                )
 
-        texts_col = [[sg.Text(result, size=(50, 2))] for ticker, result in sentiment_analysis_results.items()]
+        texts_col = [
+            [sg.Text(result, size=(50, 2))]
+            for ticker, result in sentiment_analysis_results.items()
+        ]
 
-        column1 = sg.Column(texts_col, scrollable=True, vertical_scroll_only=True, size=(500, 400))
+        column1 = sg.Column(
+            texts_col, scrollable=True, vertical_scroll_only=True, size=(500, 400)
+        )
 
         layout = [
-            [sg.Text("Company Word Clouds and Sentiment Analysis", justification="center", font=("Helvetica", 16))],
+            [
+                sg.Text(
+                    "Company Word Clouds and Sentiment Analysis",
+                    justification="center",
+                    font=("Helvetica", 16),
+                )
+            ],
             [column1],
-            [sg.Button("Close", size=(10, 1), pad=(0, 20), button_color=('white', 'red'))]
+            [
+                sg.Button(
+                    "Close", size=(10, 1), pad=(0, 20), button_color=("white", "red")
+                )
+            ],
         ]
 
         self.window5 = sg.Window("Sentiment Analysis Results", layout, finalize=True)
@@ -443,7 +453,6 @@ class TickerApplication:
             if event == sg.WINDOW_CLOSED or event == "Close":
                 break
         self.window5.close()
-            
 
     def update_window6(self):
         images_col = []
@@ -479,9 +488,9 @@ class TickerApplication:
 
     def init_window7(self):
         layout = [
-            [sg.Text("Enter the company ticker:"), sg.InputText(key='company_ticker')],
+            [sg.Text("Enter the company ticker:"), sg.InputText(key="company_ticker")],
             [sg.Button("Generate Word Cloud", key="generate_wc")],
-            [sg.Image(key='wordcloud_image')] 
+            [sg.Image(key="wordcloud_image")],
         ]
         self.window7 = sg.Window("Word Cloud Generator", layout)
 
@@ -490,16 +499,21 @@ class TickerApplication:
             company_df = self.sentiment_df[self.sentiment_df["Company"] == ticker]
 
             if not company_df.empty:
-                viz_dir = Path(__file__).resolve().parents[1] / "visualization" / "visualization"
+                viz_dir = (
+                    Path(__file__).resolve().parents[1]
+                    / "visualization"
+                    / "visualization"
+                )
                 viz_dir.mkdir(parents=True, exist_ok=True)
 
-                figpath = create_wordcloud_for_company(company_df, ticker, visualization_dir=str(viz_dir))
-                self.window7['wordcloud_image'].update(filename=figpath)
+                figpath = create_wordcloud_for_company(
+                    company_df, ticker, visualization_dir=str(viz_dir)
+                )
+                self.window7["wordcloud_image"].update(filename=figpath)
             else:
                 sg.popup("No data available for the specified ticker.")
         else:
             sg.popup("Please enter a valid ticker.")
-
 
     def run_window7(self):
         while True:
@@ -507,7 +521,7 @@ class TickerApplication:
             if event == sg.WIN_CLOSED:
                 break
             elif event == "generate_wc":
-                ticker = values['company_ticker'].strip().upper()
+                ticker = values["company_ticker"].strip().upper()
                 self.update_window7(ticker)
 
         self.window7.close()

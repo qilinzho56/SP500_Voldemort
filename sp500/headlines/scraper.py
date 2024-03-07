@@ -64,7 +64,9 @@ def headlines(headers, company_list, max_days):
             else:
                 print("Private News")
 
-        news_df = pd.DataFrame(data, columns=["Date", "Time", "Company", "Headline", "URL"])
+        news_df = pd.DataFrame(
+            data, columns=["Date", "Time", "Company", "Headline", "URL"]
+        )
         news_df = news_df.set_index("Date")
         news_df.index = pd.to_datetime(news_df.index, format="%b-%d-%y")
 
