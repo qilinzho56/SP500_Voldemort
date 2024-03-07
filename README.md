@@ -10,8 +10,6 @@ This repository hosts the code 🧑‍💻 and documentation 📄 for a machine 
 - [Factor Analysis](#factor-analysis)
 - [Development Process](#development-process)
 
-![Project Scheme](Scheme.png)
-
 ## 📖 Literature Review
 An investigation of existing forecasting models on stock movement prediction, as well as news sentiment analysis 📰
 
@@ -82,7 +80,6 @@ pyproject.toml
 README.md
 
 ```
-<<<<<<< HEAD
 ### 1.2 General User Instruction
 This guide outlines how to configure and run our TensorFlow model GUI using Anaconda and Poetry, focusing on compatibility with Python versions supported by TensorFlow (<3.12).
 
@@ -107,7 +104,6 @@ poetry install
 ```shell
 poetry run python sp500/headlines/app.py
 ```
-=======
 
 
 ### 1.2 Specific User Instruction
@@ -117,7 +113,6 @@ poetry run python sp500/headlines/app.py
 4. Activate virtual environment by running ```poetry shell``` in terminal
 5. Run the command line ```poetry run python sp500/headlines/app.py``` in terminal to interact with our application
     If you are using a Mac with an M1, you may encounter tensorflow installation problems (zsh: illegal hardware instruction). Please refer to https://stackoverflow.com/questions/65383338/zsh-illegal-hardware-instruction-python-when-installing-tensorflow-on-macbook 
->>>>>>> 7ea883151d4a007deda4336e38c760ff7f046bb4
 
 
 ## Reference
