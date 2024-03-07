@@ -86,8 +86,8 @@ README.md
 ### 1.1 General User Instruction
 This guide outlines how to configure and run our TensorFlow model GUI using Anaconda and Poetry, focusing on compatibility with Python versions supported by TensorFlow (<3.12).
 
-**Prerequisites**
-Anaconda and Poetry installed on your system. Also, **FRED** key needed for prediction model access.
+**Prerequisites** Anaconda and Poetry installed on your system. Also, 
+**FRED** key needed for prediction model access.
 
 1. Verify Anaconda's Python Installation
 ```shell
