@@ -6,8 +6,6 @@ from fredapi import Fred
 from datetime import datetime
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import train_test_split
-from sp500.headlines.scraper import headlines
-from sp500.sa.analyzer import implementation
 
 HORIZON = {"2D": 2, "5D": 5, "3M": 63, "6M": 126, "1Y": 252}
 

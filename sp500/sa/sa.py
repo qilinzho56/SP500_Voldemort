@@ -177,7 +177,8 @@ def calculate_score(df):
             finviz.com
 
     Returns:
-        None
+        average_predicted_scores (pandas.Series): A Series object indexed by company, containing the average sentiment score for each company.
+        df (pandas.DataFrame): The original DataFrame passed to the function, augmented with predictions and scores for sentiment analysis.
     """
 
     classifier = create_classifier()
@@ -193,9 +194,10 @@ def calculate_score(df):
     average_predicted_scores = df.groupby("Company")[
         "Predicted PNU score"
     ].mean()
-    print(average_predicted_scores)
+    
     # Based on PNU score calculated, obtained our view
     for ticker, score in average_predicted_scores.items():
+        print(score)
         if score > 0.05:
             print(f"We hold a bullish view on {ticker}. The sentiment score is {score}.")
         elif score < -0.05:
@@ -208,35 +210,4 @@ def calculate_score(df):
     # labeled_data_test = match_comparison(labeled_data)
     # overall_sentiment_socre(labeled_data_test)
 
-    return df
-
-def grouped_average(df):
-    """
-    Evaluate the average sentiment score for each company and provide corresponding views.
-
-    This function performs sentiment analysis on labeled data for different companies. 
-    It converts the predicted PNU label into corresponding sentiment scores and calculates 
-    the average sentiment score for each company.
-    
-    Inputs:
-        df (DataFrame): DataFrame includes the financial news headline we scrapped from 
-            finviz.com
-
-    Returns:
-        None
-    """
-
-    classifier = create_classifier()
-    df = sentiment_analyzer(df)
-
-    df["Predicted PNU"] = df.apply(create_label, axis = 1, args = (classifier, ))
-
-    # Convert the PNU label to corresponding score
-    df["Predicted PNU score"] = df["Predicted PNU"].apply(
-        label_score
-    )
-    
-    average_predicted_scores = df.groupby("Company")[
-        "Predicted PNU score"
-    ].mean()
-    return average_predicted_scores
+    return average_predicted_scores, df

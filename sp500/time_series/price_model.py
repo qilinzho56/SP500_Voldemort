@@ -391,11 +391,14 @@ def valuation_metric(y_test, y_preds):
         'Value': [accuracy, precision, original_pos_percent, recall, f1score]
     })
 
+    # Back testing outputs optional
+    """
     print(f"Accuracy = {accuracy}")
     print(f"Precision = {precision}")
     print(f"Test Positive Percentage = {original_pos_percent}")
     print(f"Recall = {recall}")
     print(f"F1 Score = {f1score}")
+    """
     return stats_df
 
 

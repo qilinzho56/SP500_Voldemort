@@ -1,7 +1,6 @@
 from sp500.sa.sa import calculate_score
 from sp500.headlines.scraper import headlines
 from sp500.visualization.create_word_cloud import create_wordcloud, map_stock_names_to_company_names
-from sp500.visualization.datatypes import GroupedColorFunc
 import pathlib
 import pandas as pd
 from pathlib import Path
@@ -29,8 +28,8 @@ if __name__ == "__main__":
         "Referer": "http://finviz.com/quote.ashx?t=",
     }
 
-    news_df =  headlines(headers, ["AAPL"], 5)
-    sentiment_df = implementation(news_df)
+    news_df =  headlines(headers, ["NVDA"], 2)
+    _, sentiment_df = implementation(news_df)
     stock_to_company = map_stock_names_to_company_names(sentiment_df,"Company")
     visualization_dir = Path(__file__).resolve().parent.parent / "visualization" / "visualization"
     create_wordcloud(
