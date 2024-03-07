@@ -5,6 +5,7 @@ import os
 import re
 import numpy as np
 from PIL import Image
+import yfinance as yf
 
 ADDITIONAL_STOPWORDS = [
     "stock",
@@ -36,7 +37,9 @@ def read_headlines(df):
     def classifier_sentiment(row):
         if row["pos"] > row["neg"] and row["Segmentation Compound"] == "Positive High":
             return "positive"
-        elif row["pos"] < row["neg"] and row["Segmentation Compound"] == "Negative High":
+        elif (
+            row["pos"] < row["neg"] and row["Segmentation Compound"] == "Negative High"
+        ):
             return "negative"
         else:
             return "uncertain"
@@ -110,6 +113,24 @@ def extract_keywords_from_headlines(headlines, stopwords):
     return keywords
 
 
+def map_stock_names_to_company_names(df, stock_column):
+    # Ensure the stock_column exists in the DataFrame
+    if stock_column not in df.columns:
+        raise ValueError(f"Column {stock_column} does not exist in DataFrame")
+
+    # Initialize a dictionary to store company names
+    company_names = {}
+
+    # Fetch company names using yfinance
+    for symbol in df[stock_column]:
+        ticker = yf.Ticker(symbol)
+        # Attempt to get the company name, add None if not found
+        company_name = ticker.info.get("longName", None)
+        company_names[symbol] = company_name
+
+    return company_names
+
+
 def create_sentiment_to_keywords_dict(company_headlines_sentiment, stopwords):
     """
     Creates a dictionary that maps sentiment categories (positive, negative)
@@ -151,11 +172,10 @@ def map_sentiments_to_colors(sentiment_to_keywords, sentiment_color_mapping):
     """
     color_to_keywords = {}
 
+    # Get the color corresponding to the current sentiment
+    # Default to gray if sentiment is not found
     for sentiment, keywords in sentiment_to_keywords.items():
-        # Get the color corresponding to the current sentiment
-        color = sentiment_color_mapping.get(
-            sentiment, "#808080"
-        )  # Default to gray if sentiment is not found
+        color = sentiment_color_mapping.get(sentiment, "#808080")
 
         # Initialize the keyword list for this color if it doesn't exist
         if color not in color_to_keywords:
@@ -175,11 +195,10 @@ def create_default_mask():
         numpy.ndarray: A default mask array.
     """
     # Create a simple circle as a default mask
-    # You can modify this to be any shape you prefer
     mask_size = (300, 300)
     mask = np.zeros(mask_size, dtype=np.uint8)
     center_x, center_y = np.array(mask_size) // 2
-    radius = min(mask_size) // 2 - 10  # radius of the circle
+    radius = min(mask_size) // 2 - 10
 
     for x in range(mask_size[0]):
         for y in range(mask_size[1]):
@@ -200,12 +219,12 @@ def create_wordcloud(
 
     # Define the mapping from sentiments to color codes
     sentiment_color_mapping = {
-        "positive": "#FF0000",  # Red for positive sentiment
-        "negative": "#008000",  # Green for negative sentiment
-        "neutral": "#808080",  # Gray for neutral sentiment
+        "positive": "#FF0000",
+        "negative": "#008000",
+        "neutral": "#808080",
     }
 
-    # Ensure the visualization directory exists
+    # Initialize the visualization directory exists
     if not os.path.exists(visualization_dir):
         os.makedirs(visualization_dir)
 
@@ -221,6 +240,8 @@ def create_wordcloud(
     # Add additional custom stopwords
     updated_stopwords = add_stopwords_with_regex(ADDITIONAL_STOPWORDS, custom_stopwords)
 
+    # Iterate through each entry in headlines_dict
+    # And check if a dictionary of company logo paths exists
     for company, sentiments in headlines_dict.items():
         if company_logo_paths and company in company_logo_paths:
             mask_path = company_logo_paths[company]
@@ -253,8 +274,6 @@ def create_wordcloud(
         all_headlines = " ".join(
             [" ".join(keywords) for keywords in sentiment_to_keywords.values()]
         )
-
-        # Retrieve the path to the company's logo, create a mask from it and invert the mask colors for the word cloud
 
         # Create a WordCloud instance
         wordcloud = WordCloud(
