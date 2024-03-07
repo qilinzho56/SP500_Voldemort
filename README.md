@@ -66,7 +66,7 @@ From the results on AAPL stock above, we have **slightly better prediction than 
 By utilizing news headlines marked as **Negative High and Positive Low** through sentiment analysis (respectively labeled as positive and negative in wordcloud), it is possible to more accurately reflect the media's perspective on a stock while also enhancing the precision of word cloud coloring.
 
 <figure style="display: inline-block">
-  <img src="AAPL_prev.jpg" alt="WC Prev" height="200"/>
+  <img src="AAPL_prev.jpg" alt="WC Prev" height="400"/>
   <figcaption>WordCloud Before Tuning</figcaption>
 </figure>
 <figure style="display: inline-block">
