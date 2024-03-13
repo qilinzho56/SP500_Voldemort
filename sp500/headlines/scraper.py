@@ -26,6 +26,7 @@ def headlines(headers, company_list, max_days):
     for company in company_list:
         company_url = headers["Referer"] + company
         response = requests.get(company_url, headers=headers)
+        print(response)
         root = lxml.html.fromstring(response.text)
         news_rows = root.xpath("//table[@id='news-table']/tr")
 
@@ -71,3 +72,11 @@ def headlines(headers, company_list, max_days):
         news_df.index = pd.to_datetime(news_df.index, format="%b-%d-%y")
 
     return news_df
+
+
+if __name__ == "__main__":
+    headers = {
+        "User-Agent": "Mozilla/5.0",
+        "Referer": "http://finviz.com/quote.ashx?t=",
+    }
+    print(headlines(headers, ["AAPL"], max_days=5))

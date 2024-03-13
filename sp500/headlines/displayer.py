@@ -7,7 +7,7 @@ from sp500.time_series.visualization.best_model_viz import model_summary_figs, M
 from sp500.time_series.time_series_preprocessing import test_train_prep
 from sp500.sentiment_analysis.sa import calculate_score
 from sp500.headlines.scraper import headlines
-from sp500.visualization.create_word_cloud import (
+from sp500.sentiment_analysis.visualization.create_word_cloud import (
     create_wordcloud_for_company,
     map_stock_names_to_company_names,
 )
@@ -286,6 +286,7 @@ class TickerApplication:
                 Path(__file__).parents[1]
                 / "time_series"
                 / "visualization"
+                / "saved_files"
                 / html_file_name
             )
 
@@ -354,7 +355,7 @@ class TickerApplication:
     def update_window4(self, company):
         data = self.company_data[company]
         preds_summary_plots, accuracy_tables = model_summary_figs(data, company, MODELS)
-        base_dir = Path(__file__).parents[1] / "time_series" / "visualization"
+        base_dir = Path(__file__).parents[1] / "time_series" / "visualization" / "saved_files"
         base_dir.mkdir(parents=True, exist_ok=True)
 
         macro_fig_path = base_dir / "Macro Indicators.png"
@@ -439,7 +440,7 @@ class TickerApplication:
 
         texts_col = [
             [sg.Text(result, size=(50, 2))]
-            for ticker, result in sentiment_analysis_results.items()
+            for _, result in sentiment_analysis_results.items()
         ]
 
         column1 = sg.Column(
@@ -477,8 +478,8 @@ class TickerApplication:
         for company in ["AAPL", "AMZN", "BA", "NVDA", "GOOG"]:
             visualization_dir = (
                 Path(__file__).resolve().parent.parent
-                / "visualization"
-                / "visualization"
+                / "sentiment_analysis" / "visualization"
+                / "saved_pictures"
             )
             fig_path = visualization_dir / f"{company}_wordcloud.png"
             images_col.append([sg.Image(str(fig_path))])
@@ -518,8 +519,9 @@ class TickerApplication:
             if not company_df.empty:
                 viz_dir = (
                     Path(__file__).resolve().parents[1]
+                    / "sentiment_analysis"
                     / "visualization"
-                    / "visualization"
+                    / "saved_pictures"
                 )
                 viz_dir.mkdir(parents=True, exist_ok=True)
                 stock_to_company = map_stock_names_to_company_names(company_df, "Company")

@@ -7,7 +7,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from tensorflow import keras
 
-DIR = Path(__file__).parents[1]
+DIR = Path(__file__).parent / "saved_files"
 ANN = keras.models.load_model(DIR / "best_ann_model.h5")
 LSTM = keras.models.load_model(DIR / "best_lstm_model.h5")
 RNF = joblib.load(DIR / "best_rnf_model.joblib")

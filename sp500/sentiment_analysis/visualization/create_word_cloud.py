@@ -1,6 +1,6 @@
 from wordcloud import WordCloud, STOPWORDS
 import matplotlib.pyplot as plt
-from sp500.visualization.datatypes import GroupedColorFunc
+from sp500.sentiment_analysis.visualization.datatypes import GroupedColorFunc
 import os
 import re
 import numpy as np
@@ -257,8 +257,8 @@ def create_wordcloud(
 
     # Define the mapping from sentiments to color codes
     sentiment_color_mapping = {
-        "positive": "#FF0000",
-        "negative": "#008000",
+        "positive": "#008000",
+        "negative": "#FF0000",
         "neutral": "#808080",
     }
 
@@ -329,7 +329,7 @@ def create_wordcloud(
         wordcloud.recolor(color_func=color_func)
 
         # Plot the word cloud image and save it
-        plt.figure(figsize=(4, 4))
+        plt.figure(figsize=(10, 10)) 
         plt.imshow(wordcloud, interpolation="bilinear")
         plt.axis("off")
 
@@ -340,6 +340,7 @@ def create_wordcloud(
 
 
 # Simplified version of wordcloud without controlling company name frequency, for GUI compatibility
+# With color revision
 def create_wordcloud_for_company(
     df,
     company_name,
@@ -370,8 +371,8 @@ def create_wordcloud_for_company(
 
     # Define the mapping from sentiments to color codes
     sentiment_color_mapping = {
-        "positive": "#FF0000",
-        "negative": "#008000",
+        "positive": "#008000",
+        "negative": "#FF0000",
         "neutral": "#808080",
     }
 
