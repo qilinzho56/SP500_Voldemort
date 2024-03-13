@@ -77,6 +77,8 @@ From the results on AAPL stock above, we have **slightly better prediction than 
 
 <img src="sp500/sentiment_analysis/visualization/saved_pictures/AAPL_wordcloud.png" alt="WC After" height="600" width="650"/>
 
+**Note** Revised from the paper, we have colored the positive as green, the negative as red, and the neutral as grey.
+
 ## 🌟 Future Improvement
 - **GUI design**: we currently utilize **the best three machine learning models pre-trained on Apple Stock** data streamlines the user experience by eliminating the need for daily model retraining. Future improvement may be thread implementation and training speed optimization.
 - **News Sentiment Integration to price-only model**: due to time constraints, the application currently handles the analysis of news sentiment and its impact on stock prices separately from the direct stock movement forecasts. Future improvement may be expanded news scraping, **broadening the scope of news scraping to include sources beyond those offered by Finviz**, which typically covers news up to only five days.
