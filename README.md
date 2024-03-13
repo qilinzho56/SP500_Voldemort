@@ -5,13 +5,13 @@ This repository hosts the code 🧑‍💻 and documentation 📄 for a text min
 
 ![Project Overview](Scheme.jpg)
 ## 📚 Table of Contents
-- [Literature Review](#literature-review)
-- [Package Exploration](#package-exploration)
-- [Data Collection, Analysis, and Evaluation](#data-collection-analysis-and-evaluation)
-- [Factor Analysis](#factor-analysis)
-- [Target](#target)
+- [Literature Review](# 📖 literature-review)
+- [Package Exploration](# 🔎 package-exploration)
+- [Data Collection, Analysis, and Evaluation](# 🗂️ data-collection-analysis-and-evaluation)
+- [Factor Analysis](# 📈 factor-analysis)
+- [Target](# ❓ target)
 - [Results](#Results)
-- [Future Improvement](#FutureImprovement)
+- [Future Improvement](# 🌟 FutureImprovement)
 - [User Guidance](#UserGuidance)
 
 ## 📖 Literature Review
@@ -77,7 +77,7 @@ From the results on AAPL stock above, we have **slightly better prediction than 
 
 <img src="sp500/sentiment_analysis/visualization/saved_pictures/AAPL_wordcloud.png" alt="WC After" height="600" width="650"/>
 
-**Note** Revised from the paper, we have colored the positive as green, the negative as red, and the neutral as grey.
+**Note:** Revised from the paper, we have colored the positive as green, the negative as red, and the neutral as grey.
 
 ## 🌟 Future Improvement
 - **GUI design**: we currently utilize **the best three machine learning models pre-trained on Apple Stock** data streamlines the user experience by eliminating the need for daily model retraining. Future improvement may be thread implementation and training speed optimization.
