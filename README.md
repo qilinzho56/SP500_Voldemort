@@ -122,26 +122,17 @@ README.md
 
 ```
 ### 1.2 General User Instruction
-This guide outlines how to configure and run our TensorFlow model GUI using Anaconda and Poetry, focusing on compatibility with Python versions supported by TensorFlow (<3.12).
+This guide outlines how to configure and run our TensorFlow model GUI using Poetry, focusing on compatibility with Python versions supported by TensorFlow (<3.12).
 
 **Prerequisites** 
-Anaconda and Poetry installed on your system. 
+Poetry installed on your system. 
 
 **FRED** key needed for prediction model access.
-
-1. Verify Anaconda's Python Installation
-```shell
-which python
-```
-2. Configure Poetry to Use Anaconda's Python 
-```shell
-poetry env use /path/to/anaconda3/bin/python
-```
-3. Installing Dependencies
+1. Installing Dependencies
 ```shell
 poetry install
 ```
-4. Running the GUI
+2. Running the GUI
 ```shell
 poetry run python sp500/headlines/app.py
 ```
