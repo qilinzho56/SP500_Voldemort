@@ -5,13 +5,13 @@ This repository hosts the code 🧑‍💻 and documentation 📄 for a text min
 
 ![Project Overview](Scheme.jpg)
 ## 📚 Table of Contents
-- [Literature Review](# 📖 literature-review)
-- [Package Exploration](# 🔎 package-exploration)
-- [Data Collection, Analysis, and Evaluation](# 🗂️ data-collection-analysis-and-evaluation)
-- [Factor Analysis](# 📈 factor-analysis)
-- [Target](# ❓ target)
+- [Literature Review](#literature-review)
+- [Package Exploration](#package-exploration)
+- [Data Collection, Analysis, and Evaluation](#data-collection-analysis-and-evaluation)
+- [Factor Analysis](#factor-analysis)
+- [Target](#target)
 - [Results](#Results)
-- [Future Improvement](# 🌟 FutureImprovement)
+- [Future Improvement](#FutureImprovement)
 - [User Guidance](#UserGuidance)
 
 ## 📖 Literature Review
