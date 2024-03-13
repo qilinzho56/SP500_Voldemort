@@ -5,9 +5,12 @@ from sp500.time_series.visualization.company_profile import company_index_exhibi
 from sp500.time_series.visualization.stock_movement import plot_stock_data_interactive
 from sp500.time_series.visualization.best_model_viz import model_summary_figs, MODELS
 from sp500.time_series.time_series_preprocessing import test_train_prep
-from sp500.sa.sa import calculate_score
+from sp500.sentiment_analysis.sa import calculate_score
 from sp500.headlines.scraper import headlines
-from sp500.visualization.create_word_cloud import create_wordcloud_for_company
+from sp500.visualization.create_word_cloud import (
+    create_wordcloud_for_company,
+    map_stock_names_to_company_names,
+)
 import webbrowser
 from pathlib import Path
 
@@ -246,18 +249,35 @@ class TickerApplication:
 
         for company in self.tickers:
             df1, df2, df3, df4, df5 = company_index_exhibit(company)
+            company_info_layout = []
 
-            company_overview_layout = create_row_layout(
-                df1, f"{company} - Company Overview"
-            )
-            financial_performance_layout = create_row_layout(
-                df2, f"{company} - Financial Performance"
-            )
-            cash_flow_layout = create_row_layout(df3, f"{company} - Cash Flow Analysis")
-            profitability_efficiency_layout = create_row_layout(
-                df4, f"{company} - Profitability Efficiency Analysis"
-            )
-            pe_metrics_layout = create_row_layout(df5, f"{company} - PE Metrics")
+            if not df1.empty:
+                company_overview_layout = create_row_layout(
+                    df1, f"{company} - Company Overview"
+                )
+                company_info_layout.extend(company_overview_layout)
+
+            elif not df2.empty:
+                financial_performance_layout = create_row_layout(
+                    df2, f"{company} - Financial Performance"
+                )
+                company_info_layout.extend(financial_performance_layout)
+            
+            elif not df3.empty:
+                cash_flow_layout = create_row_layout(df3, f"{company} - Cash Flow Analysis")
+                company_info_layout.extend(cash_flow_layout)
+
+            elif not df4.empty:
+                profitability_efficiency_layout = create_row_layout(
+                    df4, f"{company} - Profitability Efficiency Analysis"
+                )
+                company_info_layout.extend(profitability_efficiency_layout)
+
+            elif not df5.empty:
+                pe_metrics_layout = create_row_layout(df5, f"{company} - PE Metrics")
+
+            if df1.empty and df2.empty and df3.empty and df4.empty and df5.empty:
+                sg.popup("No financial data available for the specified ticker.")
 
             img_byte, html_content = plot_stock_data_interactive(company)
             html_file_name = f"{company}_interactive_stock_plot.html"
@@ -287,11 +307,7 @@ class TickerApplication:
             tab_layout = [
                 [
                     sg.Column(
-                        company_overview_layout
-                        + financial_performance_layout
-                        + cash_flow_layout
-                        + profitability_efficiency_layout
-                        + pe_metrics_layout,
+                        company_info_layout,
                         size=(400, 700),
                     ),
                     graph_column,
@@ -505,10 +521,9 @@ class TickerApplication:
                     / "visualization"
                 )
                 viz_dir.mkdir(parents=True, exist_ok=True)
-
-                figpath = create_wordcloud_for_company(
-                    company_df, ticker, visualization_dir=str(viz_dir)
-                )
+                stock_to_company = map_stock_names_to_company_names(company_df, "Company")
+                figpath = create_wordcloud_for_company(company_df, ticker,
+                                                       stock_to_company=stock_to_company ,visualization_dir=viz_dir)
                 self.window7["wordcloud_image"].update(filename=figpath)
             else:
                 sg.popup("No data available for the specified ticker.")
