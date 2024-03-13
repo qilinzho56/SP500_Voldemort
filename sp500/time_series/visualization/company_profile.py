@@ -39,6 +39,12 @@ def profile_check(company):
     ticker = yf.Ticker(company)
     company_profile = pd.Series(ticker.info, index=None)
     company_profile_df = pd.DataFrame(company_profile).transpose()
+
+    # Ensure all expected columns are present, filling missing ones with NaN
+    for original, _ in COLUMNS.items():
+        if original not in company_profile_df:
+            company_profile_df[original] = pd.NA
+
     company_profile_df = company_profile_df.rename(
         columns=COLUMNS, index={0: datetime.now().strftime("%Y-%m-%d")}
     )
@@ -61,14 +67,23 @@ def company_index_exhibit(company):
     four dataframes with finanical info from four perspectives
     """
     company_profile_df = profile_check(company)
-    overview = company_profile_df[["Ticker", "Industry", "Sector", "Market Cap"]]
-    finance_overview = company_profile_df[
-        ["Revenue Growth", "Net Income", "EBITDA Margins"]
-    ]
-    cash_flow = company_profile_df[["Operating Cash Flow", "Free Cash Flow"]]
-    profit_efficiency = company_profile_df[
-        ["Return on Equity", "Gross Margins", "Operating Margins"]
-    ]
-    PE = company_profile_df[["Trailing PE", "Forward PE", "Peg Ratio"]]
+
+    # Define the columns needed for each section
+    overview_columns = ["Ticker", "Industry", "Sector", "Market Cap"]
+    finance_overview_columns = ["Revenue Growth", "Net Income", "EBITDA Margins"]
+    cash_flow_columns = ["Operating Cash Flow", "Free Cash Flow"]
+    profit_efficiency_columns = ["Return on Equity", "Gross Margins", "Operating Margins"]
+    PE_columns = ["Trailing PE", "Forward PE", "Peg Ratio"]
+
+    # Helper function to check and select existing columns
+    def select_existing_columns(df, columns):
+        existing_columns = [col for col in columns if col in df.columns]
+        return df[existing_columns] if existing_columns else pd.DataFrame(columns=columns)
+
+    overview = select_existing_columns(company_profile_df, overview_columns)
+    finance_overview = select_existing_columns(company_profile_df, finance_overview_columns)
+    cash_flow = select_existing_columns(company_profile_df, cash_flow_columns)
+    profit_efficiency = select_existing_columns(company_profile_df, profit_efficiency_columns)
+    PE = select_existing_columns(company_profile_df, PE_columns)
 
     return overview, finance_overview, cash_flow, profit_efficiency, PE
