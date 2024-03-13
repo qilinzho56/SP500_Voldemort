@@ -102,7 +102,7 @@ sp500
         test.py 
         train_classifier.py
         visualization
-          create_word_clooud.py
+          create_word_cloud.py
           datatypes.py
           wordcloud_in_logo.py
           saved_pictures
