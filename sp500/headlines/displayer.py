@@ -275,6 +275,7 @@ class TickerApplication:
 
             elif not df5.empty:
                 pe_metrics_layout = create_row_layout(df5, f"{company} - PE Metrics")
+                company_info_layout.extend(pe_metrics_layout)
 
             if df1.empty and df2.empty and df3.empty and df4.empty and df5.empty:
                 sg.popup("No financial data available for the specified ticker.")
