@@ -121,32 +121,23 @@ pyproject.toml
 README.md
 
 ```
-### 1.2 General User Instruction
-This guide outlines how to configure and run our TensorFlow model GUI using Anaconda and Poetry, focusing on compatibility with Python versions supported by TensorFlow (<3.12).
+### 1.2.1 General User Instruction
+This guide outlines how to configure and run our TensorFlow model GUI using Poetry, focusing on compatibility with Python versions supported by TensorFlow (<3.12).
 
 **Prerequisites** 
-Anaconda and Poetry installed on your system. 
+Poetry installed on your system. 
 
 **FRED** key needed for prediction model access.
-
-1. Verify Anaconda's Python Installation
-```shell
-which python
-```
-2. Configure Poetry to Use Anaconda's Python 
-```shell
-poetry env use /path/to/anaconda3/bin/python
-```
-3. Installing Dependencies
+1. Installing Dependencies
 ```shell
 poetry install
 ```
-4. Running the GUI
+2. Running the GUI
 ```shell
 poetry run python sp500/headlines/app.py
 ```
 
-### 1.2 Specific User Instruction
+### 1.2.2 Specific User Instruction
 1. Clone repository ```git clone git@github.com:qilinzho56/SP500.git``` in terminal
 2. Run ```pip install --user -U nltk``` in terminal
 3. Run ```poetry install``` to install necessary packages in terminal
@@ -162,3 +153,6 @@ We have a more detailed documentation on using our GUI and more comprehensive re
 - Hutto, C.J. & Gilbert, E.E. (2014). VADER: A Parsimonious Rule-based Model for Sentiment Analysis of Social Media Text. Eighth International Conference on Weblogs and Social Media (ICWSM-14). Ann Arbor, MI, June 2014.
 - Loughran, T. and McDonald, B. (2011), ``When Is a Liability Not a Liability? Textual Analysis, Dictionaries, and 10-Ks.'' The Journal of Finance, 66: 35-65.
 - S. Mohan, S. Mullapudi, S. Sammeta, P. Vijayvergia and D. C. Anastasiu, "Stock Price Prediction Using News Sentiment Analysis," 2019 IEEE Fifth International Conference on Big Data Computing Service and Applications (BigDataService), Newark, CA, USA, 2019, pp. 205-208.
+  
+## Clarification
+- This project is not associated with CAPP 30122, as it surpasses the complexity and scope typically covered in this introductory course.
