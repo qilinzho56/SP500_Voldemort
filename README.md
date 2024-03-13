@@ -121,7 +121,7 @@ pyproject.toml
 README.md
 
 ```
-### 1.2 General User Instruction
+### 1.2.1 General User Instruction
 This guide outlines how to configure and run our TensorFlow model GUI using Poetry, focusing on compatibility with Python versions supported by TensorFlow (<3.12).
 
 **Prerequisites** 
@@ -137,7 +137,7 @@ poetry install
 poetry run python sp500/headlines/app.py
 ```
 
-### 1.2 Specific User Instruction
+### 1.2.2 Specific User Instruction
 1. Clone repository ```git clone git@github.com:qilinzho56/SP500.git``` in terminal
 2. Run ```pip install --user -U nltk``` in terminal
 3. Run ```poetry install``` to install necessary packages in terminal
