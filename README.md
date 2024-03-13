@@ -94,13 +94,18 @@ sp500
         app.py
         displayer.py
         scraper.py
-    sa
+    sentiment_analysis
         data
         __init__.py
         analyzer.py
         sa.py
         test.py 
         train_classifier.py
+        visualization
+          create_word_clooud.py
+          datatypes.py
+          wordcloud_in_logo.py
+          saved_pictures
     time_series
         __init__.py
         visualization
@@ -110,12 +115,8 @@ sp500
             stock_movement.py
         price_model.py
         time_series_preprocessing.py
-    visualization
-        visualization
-        __init__.py
-        create_word_clooud.py
-        datatypes.py
-        wordcloud_in_logo.py
+        saved_files
+
 poetry.lock
 pyproject.toml
 README.md
