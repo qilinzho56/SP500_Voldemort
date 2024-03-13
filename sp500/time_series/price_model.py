@@ -102,7 +102,7 @@ def ann_model_builder(input_shape):
     return model_fn
 
 
-def create_sequences(all_data, past_days=100, future_day=1):
+def create_sequences(all_data, past_days=30, future_day=1):
     """
     Create sequence for LSTM model, which requires 3D input,
     (samples, time steps, features)
@@ -146,7 +146,7 @@ def lstm_test_train(all_data):
     return X_train, X_test, y_train, y_test
 
 
-def lstm_builder(num_features, past_days=100):
+def lstm_builder(num_features, past_days=30):
     """
     Returns a function that builds and compiles an LSTM Keras Sequential model for binary classification,
     based on the given input shape and other hyperparameters. Use wrapper function, due to
@@ -203,7 +203,7 @@ def rnd_best_params(data, model_type, param_dist):
         best_params: a dictionary containing the best hyperparameters found during the randomized search
     """
     all_data, X_train, _, y_train, _ = data
-    model_dir = Path(__file__).parent
+    model_dir = Path(__file__).parent / "visualization" / "saved_files"
 
     if model_type == "rnf":
         rnf_clf = rnf_model()
@@ -392,26 +392,27 @@ def valuation_metric(y_test, y_preds):
     })
 
     # Back testing outputs optional
-    """
+
     print(f"Accuracy = {accuracy}")
     print(f"Precision = {precision}")
     print(f"Test Positive Percentage = {original_pos_percent}")
     print(f"Recall = {recall}")
     print(f"F1 Score = {f1score}")
-    """
+    
     return stats_df
 
 
 if __name__ == "__main__":
-    os.chdir(Path(__file__).parent)
+    cur_dir = os.getcwd()
     data = test_train_prep("AAPL")
     keras.backend.clear_session()
 
-    best_params =  rnd_best_params(data, model_type="ann", param_dist=ANN_PARAMS)
-    best_model = keras.models.load_model("best_ann_model.h5")
+    best_params =  rnd_best_params(data, model_type="lstm", param_dist=ANN_PARAMS)
+    best_model = keras.models.load_model(cur_dir + "/sp500/time_series/visualization/saved_files/best_lstm_model.h5")
     # best_model = joblib.load("best_rnf_model.joblib")
-    general_preds = predict_with_best_model(data, best_model, model_type="ann")
+    general_preds = predict_with_best_model(data, best_model, model_type="lstm")
     valuation_metric(general_preds["Actual"], general_preds["Predictions"])
-
-    backtest_preds = backtest(data, best_model, "ann")
+    
+    backtest_preds = backtest(data, best_model, "lstm")
     valuation_metric(backtest_preds["Actual"], backtest_preds["Predictions"])
+    
