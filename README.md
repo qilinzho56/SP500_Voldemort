@@ -141,7 +141,7 @@ poetry run python sp500/headlines/app.py
 ```
 
 ### 1.2.2 Specific User Instruction
-1. Clone repository ```git clone git@github.com:qilinzho56/SP500.git``` in terminal
+1. Clone repository ```git clone https://github.com/qilinzho56/SP500_Voldemort.git``` in terminal
 2. Run ```pip install --user -U nltk``` in terminal
 3. Run ```poetry install``` to install necessary packages in terminal
 4. Activate virtual environment by running ```poetry shell``` in terminal
