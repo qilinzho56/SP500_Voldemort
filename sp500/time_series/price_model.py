@@ -21,14 +21,14 @@ ANN_PARAMS = {
 }
 
 RNF_PARAMS = {
-    "max_depth": np.arange(10, 110, 10),
+    "max_depth": np.arange(10, 110, 10).tolist(),
     "min_samples_leaf": np.arange(1, 50).tolist(),
     "min_samples_split": np.arange(2, 120, 4).tolist(),
     "n_estimators": np.arange(200, 2000, 200).tolist(),
 }
 
 LSTM_PARAMS = {
-    "model__n_hidden": [0, 1, 2, 3],
+    "model__n_hidden": np.arange(0, 10, 1).tolist(),
     "model__n_neurons": np.arange(1, 100).tolist(),
     "model__learning_rate": reciprocal(3e-4, 1e-2).rvs(1000).tolist(),
 }
@@ -407,9 +407,9 @@ if __name__ == "__main__":
     data = test_train_prep("AAPL")
     keras.backend.clear_session()
 
-    best_params =  rnd_best_params(data, model_type="lstm", param_dist=ANN_PARAMS)
+    best_params =  rnd_best_params(data, model_type="lstm", param_dist=LSTM_PARAMS)
     best_model = keras.models.load_model(cur_dir + "/sp500/time_series/visualization/saved_files/best_lstm_model.h5")
-    # best_model = joblib.load("best_rnf_model.joblib")
+    #best_model = joblib.load(cur_dir + "/sp500/time_series/visualization/saved_files/best_rnf_model.joblib")
     general_preds = predict_with_best_model(data, best_model, model_type="lstm")
     valuation_metric(general_preds["Actual"], general_preds["Predictions"])
     

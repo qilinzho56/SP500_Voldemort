@@ -257,23 +257,23 @@ class TickerApplication:
                 )
                 company_info_layout.extend(company_overview_layout)
 
-            elif not df2.empty:
+            if not df2.empty:
                 financial_performance_layout = create_row_layout(
                     df2, f"{company} - Financial Performance"
                 )
                 company_info_layout.extend(financial_performance_layout)
             
-            elif not df3.empty:
+            if not df3.empty:
                 cash_flow_layout = create_row_layout(df3, f"{company} - Cash Flow Analysis")
                 company_info_layout.extend(cash_flow_layout)
 
-            elif not df4.empty:
+            if not df4.empty:
                 profitability_efficiency_layout = create_row_layout(
                     df4, f"{company} - Profitability Efficiency Analysis"
                 )
                 company_info_layout.extend(profitability_efficiency_layout)
 
-            elif not df5.empty:
+            if not df5.empty:
                 pe_metrics_layout = create_row_layout(df5, f"{company} - PE Metrics")
                 company_info_layout.extend(pe_metrics_layout)
 
@@ -333,7 +333,7 @@ class TickerApplication:
 
     def run_window3(self):
         while True:
-            event, values = self.window3.read()
+            event, _ = self.window3.read()
             if event == sg.WIN_CLOSED:
                 break
 
