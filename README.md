@@ -157,5 +157,3 @@ We have a more detailed documentation on using our GUI and more comprehensive re
 - Loughran, T. and McDonald, B. (2011), ``When Is a Liability Not a Liability? Textual Analysis, Dictionaries, and 10-Ks.'' The Journal of Finance, 66: 35-65.
 - S. Mohan, S. Mullapudi, S. Sammeta, P. Vijayvergia and D. C. Anastasiu, "Stock Price Prediction Using News Sentiment Analysis," 2019 IEEE Fifth International Conference on Big Data Computing Service and Applications (BigDataService), Newark, CA, USA, 2019, pp. 205-208.
   
-## Clarification
-- This project is not associated with CAPP 30122, as it surpasses the complexity and scope typically covered in this introductory course.
