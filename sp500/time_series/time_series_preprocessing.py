@@ -59,6 +59,7 @@ def fred_scrapeindicator(fred_key, series_name):
     if fred.search(series_name)["frequency_short"][0] == "M":
         indicator_df["Year_Month"] = indicator_df.index.to_period("M")
 
+    # Fed Funds Futures and SOFR Futures 
     return indicator_df
 
 
@@ -131,7 +132,7 @@ def load_ticker_data(company):
     ticker_df: a dataframe with ticker's daily general price and volume information
     """
     end_date = datetime.now().strftime("%Y-%m-%d")
-    ticker_df = yf.download(company, start="2000-01-01", end=end_date, interval="1d")
+    ticker_df = yf.download(company, start="1980-01-01", end=end_date, interval="1d")
 
     return ticker_df
 
@@ -246,10 +247,9 @@ def test_train_prep(company, news_data=None):
         int
     )
 
-    combined_df = combined_df.fillna(
-        combined_df.rolling(window=30, min_periods=1).mean()
-    )
-
+    # Missing value imputation and drop NA observations
+    rate_columns = combined_df.columns[combined_df.columns.str.contains('Rate')]
+    combined_df[rate_columns] = combined_df[rate_columns].fillna(method='ffill')
     combined_df = combined_df.dropna()
 
     y = combined_df["Target"]
@@ -271,3 +271,5 @@ def test_train_prep(company, news_data=None):
 
     return all_data, X_train, X_test, y_train, y_test
 
+if __name__ == "__main__":
+    test_train_prep("AAPL")
